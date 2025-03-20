@@ -1,4 +1,5 @@
 flask
-pdfminer.six
 pytesseract
 Pillow
+PyMuPDF
+requests
