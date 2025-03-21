@@ -1,19 +1,21 @@
 # PDF Extract with OCR
 
-This project is a Flask-based web application that extracts text from PDF files. It uses `pdfminer.six` for text extraction and falls back to OCR using `pytesseract` if the PDF is a scanned image.
+This project is a Flask-based web application that extracts text from PDF files. It determines whether the PDF contains selectable text or is a scanned document, using `pymupdf` for direct text extraction and `Tesseract OCR` for scanned images.
 
 ## Features
 
-- Extract text from PDF files using `pdfminer.six`
-- Fallback to OCR using `pytesseract` for scanned images
+- Extracts text from PDFs with selectable text using `pymupdf`
+- Detects scanned PDFs and applies OCR with `Tesseract`
+- Automatic Tesseract installation check and language data download
 - Returns extracted text in a structured JSON format
+- Provides processing time and extraction method details
 
 ## Installation
 
 1. Clone the repository:
 
     ```sh
-    git clone https://github.com/yourusername/pdf-extract-with-ocr.git
+    git clone https://github.com/kjanat/pdf-extract-with-ocr.git
     cd pdf-extract-with-ocr
     ```
 
@@ -62,24 +64,29 @@ This project is a Flask-based web application that extracts text from PDF files.
     python main.py
     ```
 
-2. Use a tool like `curl` to upload a PDF file to the `/upload` endpoint:
+2. Upload a PDF file to the `/upload` endpoint:
 
     ```sh
     curl -X POST -F file=@path/to/your/file.pdf http://127.0.0.1:5000/upload
     ```
 
-3. The application will return a JSON response with the extracted text, status, and method used.
+3. The API will return a JSON response with the extracted text, status, method used, and processing duration.
 
 ## Example Response
 
 ```json
 {
-  "body": "Extracted text from the PDF here...",
-  "status": "success",
-  "method": "pdfminer/ocr"
+   "body": "Extracted text from the PDF here...",
+   "status": "success",
+   "method": "tesseract",
+   "filename": "example.pdf",
+   "datetime": "2025-03-21T12:34:56.789Z",
+   "duration (ms)": 1234
 }
 ```
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+© 2025 Kaj Kowalski. All Rights Reserved.
+ 
+This software and associated documentation files are proprietary and may not be copied, distributed, modified, or used in any manner without prior written permission from the owner.
