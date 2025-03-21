@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify
-from PIL import Image, UnidentifiedImageError
+from PIL import Image, UnidentifiedImageError, ImageOps, ImageFilter #, ImageEnhance
+from datetime import datetime
 import io
 import os
+import time
 import requests
 import platform
 import shutil
@@ -57,22 +59,38 @@ def download_language_data(lang="nld"):
         else:
             raise Exception(f"Failed to download {lang}.traineddata. Status code: {response.status_code}")
 
-def extract_text_from_scanned_pdf(pdf_path, lang="nld"):
+def preprocess_image(img):
+    # Preprocess the image to improve OCR quality.
+    
+    # Convert to grayscale
+    img = ImageOps.grayscale(img)
+    
+    # Apply thresholding
+    img = ImageOps.autocontrast(img)
+
+    # Remove noise
+    img = img.filter(ImageFilter.MedianFilter(size=1))
+
+    return img
+
+def extract_text_from_scanned_pdf(pdf_path, lang="nld", config="--oem 1 --psm 3"):
     """Extract text from a scanned PDF using OCR without modifying the PDF."""
     download_language_data(lang)
     doc = fitz.open(pdf_path)
+    # reader = easyocr.Reader(['nl','en'], gpu=True)
     extracted_text = []
 
     for page_num, page in enumerate(doc):
         # Convert page to an image
-        pix = page.get_pixmap()
+        pix = page.get_pixmap(dpi=600)
         img = Image.open(io.BytesIO(pix.tobytes("png")))
 
-        # Run OCR
-        ocr_text = pytesseract.image_to_string(img, lang=lang)
+        # Preprocess the image
+        img = preprocess_image(img)
 
-        # Preserve ligatures & whitespace
-        text_flags = fitz.TEXT_PRESERVE_LIGATURES | fitz.TEXT_PRESERVE_WHITESPACE
+        # Run OCR
+        ocr_text = pytesseract.image_to_string(img, lang=lang, config=config)
+
         extracted_text.append(f"Page {page_num + 1}:\n{ocr_text.strip()}\n")
 
     return "\n".join(extracted_text)
@@ -91,6 +109,11 @@ def extract_text_pymupdf(pdf_path):
     text = "\n".join([page.get_text("text", flags=fitz.TEXT_PRESERVE_LIGATURES | fitz.TEXT_PRESERVE_WHITESPACE) for page in doc])
     return text
 
+# def extract_text_pymupdf_ocr(pdf_path):
+#     doc = fitz.open(pdf_path)
+#     text = "\n".join([page.get_textpage_ocr("text", flags=fitz.TEXT_PRESERVE_LIGATURES | fitz.TEXT_PRESERVE_WHITESPACE) for page in doc])
+#     return text
+
 @app.route('/upload', methods=['POST'])
 def upload_pdf():
     if 'file' not in request.files:
@@ -104,18 +127,33 @@ def upload_pdf():
     temp_path = os.path.join("temp", file.filename)
     os.makedirs("temp", exist_ok=True)
     file.save(temp_path)
+    
+    start_time = time.time()  # Record the start time
 
     try:
         if is_scanned(temp_path):
+            # print("Document already has selectable text.")
+            # extracted_text = extract_text_pymupdf_ocr(temp_path)
+            # method = "pymupdf/ocr"
             print("Document is scanned. Running OCR...")
             extracted_text = extract_text_from_scanned_pdf(temp_path)
-            method = "pymupdf/ocr"
+            method = "tesseract"
         else:
             print("Document already has selectable text.")
             extracted_text = extract_text_pymupdf(temp_path)
             method = "pymupdf"
+            
+        # Calculate the duration in milliseconds
+        duration = round((time.time() - start_time) * 1000, 0)
 
-        return jsonify({"body": extracted_text, "status": "success", "method": method})
+        return jsonify({
+            "body": extracted_text,
+            "status": "success",
+            "method": method,
+            "filename": file.filename,
+            "datetime": datetime.now().isoformat(),
+            "duration (ms)": duration
+        })
     except UnidentifiedImageError:
         return jsonify({"error": "Cannot identify image file"}), 400
     except Exception as e:
