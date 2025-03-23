@@ -54,6 +54,23 @@ window.onclick = function(event) {
     }
 }
 
+// Display curl command
+document.addEventListener('DOMContentLoaded', (event) => {
+    const url = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/upload`;
+    const curlCommand = `curl -X POST -F file=@path/to/your/file.pdf ${url}`;
+    document.getElementById('curl-command').textContent = curlCommand;
+});
+
+// // Copy result to clipboard
+// document.getElementById('copy-button').addEventListener('click', () => {
+//     const resultText = document.getElementById('result').textContent;
+//     navigator.clipboard.writeText(resultText).then(() => {
+//         alert('Text copied to clipboard');
+//     }).catch(err => {
+//         console.error('Failed to copy text: ', err);
+//     });
+// });
+
 // API call to upload file
 async function uploadFile(file) {
     let formData = new FormData();

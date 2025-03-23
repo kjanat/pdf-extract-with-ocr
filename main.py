@@ -5,64 +5,26 @@ import time
 from datetime import datetime, timezone
 from PIL import Image, UnidentifiedImageError, ImageOps, ImageFilter
 import io
-import pymupdf as fitz
+import pymupdf
 import pytesseract
-import requests
-import platform
-import shutil
-# from werkzeug.utils import secure_filename
-# from pdf2image.exceptions import PDFInfoNotInstalledError, PDFPageCountError, PDFSyntaxError
-# from pdf2image import convert_from_path
+import uuid
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app)
 
-# Automatically detect the Tesseract executable path
-def detect_tesseract_path():
-    if platform.system() == "Windows":
-        default_path = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-        if os.path.exists(default_path):
-            return default_path
-        else:
-            return shutil.which("tesseract")
-    elif platform.system() == "Linux":
-        default_path = "/usr/bin/tesseract"
-        if os.path.exists(default_path):
-            return default_path
-        else:
-            return shutil.which("tesseract")
-    else:
-        return shutil.which("tesseract")
+def is_scanned(pdf_path):
+    """Check if the PDF is scanned by checking if any page contains selectable text."""
+    doc = pymupdf.open(pdf_path)
+    for page in doc:
+        text = page.get_text("text")
+        if text.strip():  # If text is found, it's not scanned
+            return False
+    return True  # No text found, it's likely scanned
 
-tesseract_path = detect_tesseract_path()
-if tesseract_path:
-    pytesseract.pytesseract.tesseract_cmd = tesseract_path
-else:
-    raise EnvironmentError("Tesseract executable not found. Please install Tesseract OCR.")
-
-# Set Tesseract data path if necessary (Windows example)
-if platform.system() == "Windows":
-    os.environ["TESSDATA_PREFIX"] = r"C:\Program Files\Tesseract-OCR\tessdata"
-elif platform.system() == "Linux":
-    os.environ["TESSDATA_PREFIX"] = "/usr/share/tesseract-ocr/4.00/tessdata/"
-else:
-    os.environ["TESSDATA_PREFIX"] = "/usr/share/tesseract-ocr/4.00/tessdata/"
-
-def download_language_data(lang="nld"):
-    tessdata_dir = os.environ["TESSDATA_PREFIX"]
-    lang_file_path = os.path.join(tessdata_dir, f"{lang}.traineddata")
-    
-    if not os.path.exists(lang_file_path):
-        print(f"Downloading {lang}.traineddata...")
-        url = f"https://github.com/tesseract-ocr/tessdata/raw/main/{lang}.traineddata"
-        response = requests.get(url)
-        
-        if response.status_code == 200:
-            with open(lang_file_path, "wb") as f:
-                f.write(response.content)
-            print(f"{lang}.traineddata downloaded successfully.")
-        else:
-            raise Exception(f"Failed to download {lang}.traineddata. Status code: {response.status_code}")
+def extract_text_pymupdf(pdf_path):
+    doc = pymupdf.open(pdf_path)
+    text = "\n".join([page.get_text("text", flags=pymupdf.TEXT_PRESERVE_LIGATURES | pymupdf.TEXT_PRESERVE_WHITESPACE) for page in doc])
+    return text
 
 def preprocess_image(img):
     # Preprocess the image to improve OCR quality.
@@ -80,10 +42,11 @@ def preprocess_image(img):
 
 def extract_text_from_scanned_pdf(pdf_path, lang="nld", config="--oem 1 --psm 3"):
     """Extract text from a scanned PDF using OCR without modifying the PDF."""
-    download_language_data(lang)
-    doc = fitz.open(pdf_path)
-    # reader = easyocr.Reader(['nl','en'], gpu=True)
+    # download_language_data(lang)
+    doc = pymupdf.open(pdf_path)
     extracted_text = []
+    if os.environ.get('AM_I_IN_A_DOCKER_CONTAINER', False):
+        config += f" --tessdata-dir \"{os.environ['TESSDATA_PREFIX']}\""
 
     for page_num, page in enumerate(doc):
         # Convert page to an image
@@ -103,20 +66,6 @@ def extract_text_from_scanned_pdf(pdf_path, lang="nld", config="--oem 1 --psm 3"
         extracted_text.append(ocr_text.strip())
 
     return "\n".join(extracted_text)
-
-def is_scanned(pdf_path):
-    """Check if the PDF is scanned by checking if any page contains selectable text."""
-    doc = fitz.open(pdf_path)
-    for page in doc:
-        text = page.get_text("text")
-        if text.strip():  # If text is found, it's not scanned
-            return False
-    return True  # No text found, it's likely scanned
-
-def extract_text_pymupdf(pdf_path):
-    doc = fitz.open(pdf_path)
-    text = "\n".join([page.get_text("text", flags=fitz.TEXT_PRESERVE_LIGATURES | fitz.TEXT_PRESERVE_WHITESPACE) for page in doc])
-    return text
 
 def clean_text(text):
     """Remove lines that contain only whitespace characters and reduce multiple sequential newlines to a maximum of two newlines."""
@@ -139,7 +88,8 @@ def upload_pdf():
         return jsonify({"error": "No selected file"}), 400
 
     # Save the file temporarily
-    temp_path = os.path.join("temp", file.filename)
+    unique_filename = f"{uuid.uuid4()}.{file.filename.split('.')[-1]}"
+    temp_path = os.path.join("temp", unique_filename)
     os.makedirs("temp", exist_ok=True)
     file.save(temp_path)
     
@@ -147,9 +97,6 @@ def upload_pdf():
 
     try:
         if is_scanned(temp_path):
-            # print("Document already has selectable text.")
-            # extracted_text = extract_text_pymupdf_ocr(temp_path)
-            # method = "pymupdf/ocr"
             print("Document is scanned. Running OCR...")
             extracted_text = extract_text_from_scanned_pdf(temp_path)
             method = "tesseract"
@@ -181,4 +128,12 @@ def upload_pdf():
         os.remove(temp_path)
 
 if __name__ == '__main__':
-    app.run(port=5000, host='127.0.0.1', debug=True)
+    import hypercorn.asyncio
+    from hypercorn.config import Config
+    import asyncio
+
+    config = Config()
+    config.bind = ["0.0.0.0:5000"]
+    config.alpn_protocols = ["h2", "http/1.1"]
+
+    asyncio.run(hypercorn.asyncio.serve(app, config))

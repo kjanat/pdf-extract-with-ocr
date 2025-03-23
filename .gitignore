@@ -175,3 +175,10 @@ cython_debug/
 
 # Local shortcut files
 .lnk
+
+# Tessdata files
+tessdata/
+
+# Docker files
+Dockerfile
+docker-compose.yml

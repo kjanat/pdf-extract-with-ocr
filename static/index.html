@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap">
+    <link rel="icon" type="image/svg" href="/static/images/KJANAT.svg">
 </head>
 
 <body>
@@ -19,7 +20,12 @@
 
     <nav>
         <ul>
-            <li><a href="#" id="api-button">API</a></li>
+            <li>
+                <a class="navbar-logo" href="/">
+                    <img src="/static/images/KJANAT.svg" width="30" 5 height="30" alt="KJANAT Logo">
+                </a>
+            </li>
+            <li><a id="api-button">API</a></li>
             <li><a href="https://github.com/kjanat/pdf-extract-with-ocr" target="_blank">GitHub</a></li>
         </ul>
     </nav>
@@ -28,7 +34,7 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <p>Example <code>curl</code> command:</p>
-            <pre><code>curl -X POST -F file=@path/to/your/file.pdf http://127.0.0.1:5000/upload</code></pre>
+            <pre><code id="curl-command"></code></pre>
         </div>
     </div>
     <div id="drop-area">
@@ -42,7 +48,12 @@
     <div id="loading-spinner" class="spinner"></div>
 
     <div id="result-title">Extracted Text:</div>
-    <div id="result"></div>
+    <div id="result">
+        <!-- <button id="copy-button" class="copy-icon-button">
+            <img src="/static/images/copy-icon.svg" alt="Copy" width="20" height="20">
+        </button> -->
+    </div>
+    <!-- <button id="copy-button" class="button">Copy to Clipboard</button> -->
     <script src="/static/script.js"></script>
 </body>
 

@@ -3,5 +3,4 @@ flask-cors
 pytesseract
 Pillow
 PyMuPDF
-requests
-# pdf2image
+hypercorn
