@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from PIL import Image, UnidentifiedImageError, ImageOps, ImageFilter
 import io
 import pymupdf as fitz
@@ -10,9 +10,9 @@ import pytesseract
 import requests
 import platform
 import shutil
-from werkzeug.utils import secure_filename
-from pdf2image.exceptions import PDFInfoNotInstalledError, PDFPageCountError, PDFSyntaxError
-from pdf2image import convert_from_path
+# from werkzeug.utils import secure_filename
+# from pdf2image.exceptions import PDFInfoNotInstalledError, PDFPageCountError, PDFSyntaxError
+# from pdf2image import convert_from_path
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -169,7 +169,7 @@ def upload_pdf():
             "status": "success",
             "method": method,
             "filename": file.filename,
-            "datetime": datetime.now().isoformat(),
+            "datetime": datetime.now(timezone.utc).isoformat(),
             "duration (ms)": duration
         })
     except UnidentifiedImageError:

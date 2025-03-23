@@ -64,7 +64,7 @@ This project is a Flask-based web application that extracts text from PDF files.
     python main.py
     ```
 
-2. Upload a PDF file to the `/upload` endpoint:
+2. Open your browser and navigate to `http://127.0.0.1:5000` to access the web interface and upload a pdf, or upload a PDF file through the `/upload` endpoint:
 
     ```sh
     curl -X POST -F file=@path/to/your/file.pdf http://127.0.0.1:5000/upload
@@ -80,13 +80,13 @@ This project is a Flask-based web application that extracts text from PDF files.
    "status": "success",
    "method": "tesseract",
    "filename": "example.pdf",
-   "datetime": "2025-03-21T12:34:56.789Z",
-   "duration (ms)": 1234
+   "datetime": "2025-03-21T12:34:56.789012+00:00",
+   "duration (ms)": 12.3
 }
 ```
 
 ## License
 
 © 2025 Kaj Kowalski. All Rights Reserved.
- 
+
 This software and associated documentation files are proprietary and may not be copied, distributed, modified, or used in any manner without prior written permission from the owner.
