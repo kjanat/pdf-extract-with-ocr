@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Extract with OCR</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <nav>
+        <ul>
+            <li><button id="api-button">API</button></li>
+            <li><a href="https://github.com/kjanat/pdf-extract-with-ocr" target="_blank">GitHub</a></li>
+        </ul>
+    </nav>
+
+    <h1>PDF Extract with OCR</h1>
+    <p>Extract text from a PDF file using Optical Character Recognition (OCR).</p>
+
+    <div id="api-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>Example `curl` command:</p>
+            <pre><code>curl -X POST -F file=@path/to/your/file.pdf http://127.0.0.1:5000/upload</code></pre>
+        </div>
+    </div>
+    <div id="drop-area">
+        <form class="my-form">
+            <p>Drag and drop a PDF file here or click to select a file</p>
+            <input type="file" id="fileElem" accept="application/pdf" onchange="handleFiles(this.files)">
+            <label class="button" for="fileElem">Select a file</label>
+        </form>
+    </div>
+    <div id="result-title">Extracted Text:</div>
+    <div id="result"></div>
+    <script src="/static/script.js"></script>
+</body>
+
+</html>

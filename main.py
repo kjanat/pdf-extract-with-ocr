@@ -1,16 +1,21 @@
 from flask import Flask, request, jsonify
-from PIL import Image, UnidentifiedImageError, ImageOps, ImageFilter #, ImageEnhance
-from datetime import datetime
-import io
+from flask_cors import CORS
 import os
 import time
+from datetime import datetime
+from PIL import Image, UnidentifiedImageError, ImageOps, ImageFilter
+import io
+import pymupdf as fitz
+import pytesseract
 import requests
 import platform
 import shutil
-import pytesseract
-import pymupdf as fitz
+from werkzeug.utils import secure_filename
+from pdf2image.exceptions import PDFInfoNotInstalledError, PDFPageCountError, PDFSyntaxError
+from pdf2image import convert_from_path
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 # Automatically detect the Tesseract executable path
 def detect_tesseract_path():
@@ -109,10 +114,16 @@ def extract_text_pymupdf(pdf_path):
     text = "\n".join([page.get_text("text", flags=fitz.TEXT_PRESERVE_LIGATURES | fitz.TEXT_PRESERVE_WHITESPACE) for page in doc])
     return text
 
-# def extract_text_pymupdf_ocr(pdf_path):
-#     doc = fitz.open(pdf_path)
-#     text = "\n".join([page.get_textpage_ocr("text", flags=fitz.TEXT_PRESERVE_LIGATURES | fitz.TEXT_PRESERVE_WHITESPACE) for page in doc])
-#     return text
+def clean_text(text):
+    """Remove lines that contain only whitespace characters and reduce multiple sequential newlines to a maximum of two newlines."""
+    lines = text.splitlines()
+    cleaned_lines = [line.strip() for line in lines]
+    cleaned_text = '\n'.join(cleaned_lines)
+    return '\n\n'.join([para for para in cleaned_text.split('\n\n') if para.strip() != ''])
+
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
 
 @app.route('/upload', methods=['POST'])
 def upload_pdf():
@@ -143,6 +154,9 @@ def upload_pdf():
             extracted_text = extract_text_pymupdf(temp_path)
             method = "pymupdf"
             
+        # Reduce multiple sequential newlines to a maximum of two newlines
+        extracted_text = clean_text(extracted_text)
+        
         # Calculate the duration in milliseconds
         duration = round((time.time() - start_time) * 1000, 0)
 
