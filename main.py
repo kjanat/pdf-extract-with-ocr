@@ -17,8 +17,9 @@ from typing import Union
 app = Flask(__name__)
 CORS(app)
 
-# # Set the logger level to INFO to see log messages
-# app.logger.setLevel("INFO")
+# Set the logger level to INFO to see log messages
+if os.environ.get('AM_I_IN_A_DOCKER_CONTAINER', False):
+    app.logger.setLevel("INFO")
 
 def is_scanned(pdf_path):
     """
@@ -76,6 +77,7 @@ def extract_text_from_scanned_pdf(pdf_path, lang="nld", config="--oem 1 --psm 3"
     doc = fitz.open(pdf_path)
     extracted_text = []
     if os.environ.get('AM_I_IN_A_DOCKER_CONTAINER', False):
+        app.logger.info("Running in Docker container")
         config += f" --tessdata-dir \"{os.environ['TESSDATA_PREFIX']}\""
     
     for page_num, page in enumerate(doc):

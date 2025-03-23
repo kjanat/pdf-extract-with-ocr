@@ -1,11 +1,11 @@
 # PDF Extract with OCR
 
-This project is a Flask-based web application that extracts text from PDF files. It determines whether the PDF contains selectable text or is a scanned document, using `pymupdf` for direct text extraction and `Tesseract OCR` for scanned images.
+This project is a Flask-based web application that extracts text from PDF files. It determines whether the PDF contains selectable text or is a scanned document, using [`PyMuPDF`](https://github.com/pymupdf/PyMuPDF) for direct text extraction and [`Tesseract OCR`](https://github.com/tesseract-ocr/tesseract) for scanned images.
 
 ## Features
 
-- Extracts text from PDFs with selectable text using `pymupdf`
-- Detects scanned PDFs and applies OCR with `Tesseract`
+- Extracts text from PDFs with selectable text using [`pymupdf`](https://github.com/pymupdf/PyMuPDF)
+- Detects scanned PDFs and applies OCR with [`tesseract`](https://github.com/tesseract-ocr/tesseract)
 - Automatic Tesseract installation check and language data download
 - Returns extracted text in a structured JSON format
 - Provides processing time and extraction method details
