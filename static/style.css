@@ -1,15 +1,20 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', Arial, sans-serif;
     background-color: #f4f4f9;
     margin: 0;
-    padding: 0;
-    padding-top: 60px; /* Adjust this value to match the height of your nav bar */
+    padding: 60px 0 0 0;
+    /* padding-top: 60px; */ /* Adjust this value to match the height of your nav bar */
     display: flex;
     flex-direction: column;
     justify-content: flex-start; /* Change this line */
     align-items: center;
     height: 100vh;
     box-sizing: border-box; /* Add this line */
+}
+
+code, pre {
+    font-family: "Roboto Mono", 'Source Code Pro', monospace;
+    text-wrap: auto;
 }
 
 main {
@@ -38,10 +43,12 @@ nav ul {
     align-items: center; /* Add this line */
     margin: 0;
     padding: 0;
+    height: 100%;
 }
 
 nav ul li {
     margin: 0 15px;
+    height: 100%;
 }
 
 nav ul li a,
@@ -52,6 +59,10 @@ nav ul li button {
     border: none;
     cursor: pointer;
     font-size: 16px;
+    line-height: 30px;
+    height: 100%;
+    display: flex;
+    align-items: center;
 }
 
 nav ul li button:hover,
@@ -136,9 +147,13 @@ nav ul li a:hover {
     width: 80%;
     max-width: 600px;
     border-radius: 10px;
-    position: relative; /* Add this line */
-    top: 50%; /* Add this line */
-    transform: translateY(-50%); /* Add this line */
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.modal-content pre > code {
+    font-size: small;
 }
 
 .close {
@@ -153,4 +168,79 @@ nav ul li a:hover {
     color: black;
     text-decoration: none;
     cursor: pointer;
+}
+
+.spinner {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #6c63ff; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    position: fixed;
+    top: 50%;
+    /* left: 50%; */
+    transform: translate(-50%, -50%);
+    z-index: 1001; /* Ensure it is above other elements */
+    display: none;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Add css for mobile view */
+@media (max-width: 888px) {
+    body {
+        padding: 60px 10px 10px 10px;
+        width: -webkit-fill-available;
+    }
+
+    /* nav {
+        width: 100%;
+        position: fixed;
+        padding: 10px 0;
+        margin: -10px -10px;
+    } */
+
+    nav ul {
+        flex-direction: row;
+    }
+
+    nav ul li {
+        margin: 0;
+        /* padding: 10px; */
+        width: 100%;
+        text-align: center;
+    }
+
+    nav ul li a,
+    nav ul li button {
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+    }
+
+    #drop-area {
+        width: -webkit-fill-available;
+    }
+
+    .button {
+        padding: 10px;
+        width: 80%;
+    }
+
+    #result-title {
+        font-size: 16px;
+    }
+
+    #result {
+        padding: 10px;
+        width: -webkit-fill-available;
+    }
+
+    .modal-content {
+        width: 90%;
+    }
 }

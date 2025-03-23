@@ -96,7 +96,11 @@ def extract_text_from_scanned_pdf(pdf_path, lang="nld", config="--oem 1 --psm 3"
         # Run OCR
         ocr_text = pytesseract.image_to_string(img, lang=lang, config=config)
 
-        extracted_text.append(f"Page {page_num + 1}:\n{ocr_text.strip()}\n")
+        # Version with appending page number
+        # extracted_text.append(f"Page {page_num + 1}:\n{ocr_text.strip()}\n")
+        
+        # Version without appending page number
+        extracted_text.append(ocr_text.strip())
 
     return "\n".join(extracted_text)
 

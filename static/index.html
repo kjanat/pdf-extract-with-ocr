@@ -5,24 +5,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDF Extract with OCR</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap">
 </head>
 
 <body>
+    <header>
+        <h1>PDF Extract with OCR</h1>
+        <p>Extract text from a PDF file.</p>
+    </header>
+
     <nav>
         <ul>
-            <li><button id="api-button">API</button></li>
+            <li><a href="#" id="api-button">API</a></li>
             <li><a href="https://github.com/kjanat/pdf-extract-with-ocr" target="_blank">GitHub</a></li>
         </ul>
     </nav>
 
-    <h1>PDF Extract with OCR</h1>
-    <p>Extract text from a PDF file using Optical Character Recognition (OCR).</p>
-
     <div id="api-modal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <p>Example `curl` command:</p>
+            <p>Example <code>curl</code> command:</p>
             <pre><code>curl -X POST -F file=@path/to/your/file.pdf http://127.0.0.1:5000/upload</code></pre>
         </div>
     </div>
@@ -33,6 +38,9 @@
             <label class="button" for="fileElem">Select a file</label>
         </form>
     </div>
+
+    <div id="loading-spinner" class="spinner"></div>
+
     <div id="result-title">Extracted Text:</div>
     <div id="result"></div>
     <script src="/static/script.js"></script>

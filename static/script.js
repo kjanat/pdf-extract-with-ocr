@@ -39,25 +39,6 @@ function handleFiles(files) {
     }
 }
 
-async function uploadFile(file) {
-    let formData = new FormData();
-    formData.append("file", file);
-
-    const response = await fetch("http://localhost:5000/upload", {
-        method: "POST",
-        body: formData
-    });
-
-    const data = await response.json();
-    if (data.status === 'success') {
-        resultTitle.style.display = 'block';
-        resultDiv.style.display = 'block';
-        resultDiv.textContent = data.body;
-    } else {
-        resultDiv.textContent = `Error: ${data.error}`;
-    }
-}
-
 // Modal functionality
 apiButton.onclick = function() {
     apiModal.style.display = 'block';
@@ -70,5 +51,41 @@ closeModal.onclick = function() {
 window.onclick = function(event) {
     if (event.target == apiModal) {
         apiModal.style.display = 'none';
+    }
+}
+
+// API call to upload file
+async function uploadFile(file) {
+    let formData = new FormData();
+    formData.append("file", file);
+
+    // Clear previous result
+    resultTitle.style.display = 'none';
+    resultDiv.style.display = 'none';
+    resultDiv.textContent = '';
+
+    // Show loading spinner
+    const spinner = document.getElementById('loading-spinner');
+    spinner.style.display = 'block';
+
+    try {
+        const response = await fetch("http://localhost:5000/upload", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await response.json();
+        if (data.status === 'success') {
+            resultTitle.style.display = 'block';
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = data.body;
+        } else {
+            resultDiv.textContent = `Error: ${data.error}`;
+        }
+    } catch (error) {
+        resultDiv.textContent = `Error: ${error.message}`;
+    } finally {
+        // Hide loading spinner
+        spinner.style.display = 'none';
     }
 }
