@@ -56,7 +56,8 @@ window.onclick = function(event) {
 
 // Display curl command
 document.addEventListener('DOMContentLoaded', (event) => {
-    const url = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/upload`;
+    const port = window.location.port ? `:${window.location.port}` : '';
+    const url = `${window.location.protocol}//${window.location.hostname}${port}/upload`;
     const curlCommand = `curl -X POST -F file=@path/to/your/file.pdf ${url}`;
     document.getElementById('curl-command').textContent = curlCommand;
 });

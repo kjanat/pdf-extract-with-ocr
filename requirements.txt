@@ -3,4 +3,11 @@ flask-cors
 pytesseract
 Pillow
 PyMuPDF
-hypercorn
+Werkzeug
+
+# Linux
+gunicorn
+gevent
+
+# Windows
+waitress
