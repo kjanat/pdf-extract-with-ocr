@@ -1,6 +1,6 @@
 import os
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from PIL import Image, UnidentifiedImageError, ImageOps, ImageFilter
 import io
 import pymupdf as fitz
@@ -8,17 +8,18 @@ import pytesseract
 import uuid
 from flask import Flask, Response, request, jsonify
 from flask_cors import CORS
-from werkzeug.datastructures import FileStorage
-from werkzeug.utils import secure_filename
-from werkzeug.wrappers import Request, Response
-from werkzeug.exceptions import BadRequest
-from typing import Union
+# from werkzeug.datastructures import FileStorage
+# from werkzeug.utils import secure_filename
+from werkzeug.wrappers import Response #, Request
+# from werkzeug.exceptions import BadRequest
+# from typing import Union
+# from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
 app = Flask(__name__)
 CORS(app)
 
 # Set the logger level to INFO to see log messages
-if os.environ.get('AM_I_IN_A_DOCKER_CONTAINER', False):
+if os.environ.get('IS_DOCKER_CONTAINER', False):
     app.logger.setLevel("INFO")
 
 def is_scanned(pdf_path):
@@ -76,9 +77,9 @@ def extract_text_from_scanned_pdf(pdf_path, lang="nld", config="--oem 1 --psm 3"
     """
     doc = fitz.open(pdf_path)
     extracted_text = []
-    if os.environ.get('AM_I_IN_A_DOCKER_CONTAINER', False):
-        app.logger.info("Running in Docker container")
-        config += f" --tessdata-dir \"{os.environ['TESSDATA_PREFIX']}\""
+    # if os.environ.get('IS_DOCKER_CONTAINER', False):
+        # app.logger.info("Running in Docker container")
+        # config += f" --tessdata-dir \"{os.environ['TESSDATA_PREFIX']}\""
     
     for page_num, page in enumerate(doc):
         # Convert page to an image

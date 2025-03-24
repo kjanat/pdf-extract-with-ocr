@@ -1,5 +1,8 @@
+# Flask
 flask
 flask-cors
+Flask-JWT-Extended
+
 pytesseract
 Pillow
 PyMuPDF
