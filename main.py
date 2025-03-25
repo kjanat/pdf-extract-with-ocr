@@ -3,7 +3,7 @@ import time
 from datetime import datetime, timezone, timedelta
 from PIL import Image, UnidentifiedImageError, ImageOps, ImageFilter
 import io
-import pymupdf as fitz
+import fitz
 import pytesseract
 import uuid
 from flask import Flask, Response, request, jsonify
