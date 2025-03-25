@@ -1,11 +1,30 @@
+<div align="center">
+
 # PDF Extract with OCR
 
-This project is a Flask-based web application that extracts text from PDF files. It determines whether the PDF contains selectable text or is a scanned document, using [`PyMuPDF`](https://github.com/pymupdf/PyMuPDF) for direct text extraction and [`Tesseract OCR`](https://github.com/tesseract-ocr/tesseract) for scanned images.
+</div>
+
+<div align="center" style="padding: 2vh 10vw 1vh 10vw; display: flex; flex-basis: auto; flex-wrap: wrap; flex-shrink: 1; flex-flow: row wrap; float: inline-flex; justify-content: space-around; justify-items: center;">
+
+<!--[![GitHub Release](https://img.shields.io/github/v/release/kjanat/pdf-extract-with-ocr?display_name=tag&style=for-the-badge)][2]
+[![GitHub License](https://img.shields.io/github/license/kjanat/pdf-extract-with-ocr?style=for-the-badge)][3]-->
+[![Commits](https://img.shields.io/github/commit-activity/m/kjanat/pdf-extract-with-ocr?label=commits&style=for-the-badge)][4]
+[![GitHub last commit](https://img.shields.io/github/last-commit/kjanat/pdf-extract-with-ocr?style=for-the-badge&display_timestamp=committer)][5]
+
+</div>
+
+<!--<div align="center">
+
+# PDF Extract with OCR
+
+</div>-->
+
+This project is a Flask-based web application that extracts text from PDF files. It determines whether the PDF contains selectable text or is a scanned document, using [`PyMuPDF`][pymupdf] for direct text extraction and [`Tesseract OCR`][tesseract] for scanned images.
 
 ## Features
 
-- Extracts text from PDFs with selectable text using [`pymupdf`](https://github.com/pymupdf/PyMuPDF)
-- Detects scanned PDFs and applies OCR with [`tesseract`](https://github.com/tesseract-ocr/tesseract)
+- Extracts text from PDFs with selectable text using [`pymupdf`][pymupdf]
+- Detects scanned PDFs and applies OCR with [`tesseract`][tesseract]
 - Automatic Tesseract installation check and language data download
 - Returns extracted text in a structured JSON format
 - Provides processing time and extraction method details
@@ -90,3 +109,11 @@ This project is a Flask-based web application that extracts text from PDF files.
 © 2025 Kaj Kowalski. All Rights Reserved.
 
 This software and associated documentation files are proprietary and may not be copied, distributed, modified, or used in any manner without prior written permission from the owner.
+
+[1]: #installation
+[2]: https://github.com/kjanat/Hi-Res-Redirector/releases/latest "Latest release"
+[3]: # "Not licensed"
+[4]: https://github.com/kjanat/pdf-extract-with-ocr/commits "Commit History"
+[5]: https://github.com/kjanat/pdf-extract-with-ocr/pulse/monthly "Last activity"
+[tesseract]: https://github.com/tesseract-ocr/tesseract
+[pymupdf]: https://github.com/pymupdf/PyMuPDF
