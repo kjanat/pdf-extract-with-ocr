@@ -28,6 +28,6 @@ target "ocr-app" {
 target "worker" {
   inherits = ["base"]
   dockerfile = "Dockerfile"
-  tags = ["${REGISTRY}/${IMAGE_NAME}:worker"] 
+  tags = ["${REGISTRY}/${IMAGE_NAME}:worker"]
   output = ["type=registry"]
 }
