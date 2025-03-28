@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-multiarch:
-    name: Build Docker image (multi-arch)
+    name: Build Docker images (multi-arch)
     runs-on: ubuntu-latest
 
     steps:
@@ -27,10 +27,9 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v5
+    # Build and push using docker-bake.hcl configuration
+    - name: Build and push Docker images
+      uses: docker/bake-action@v6
       with:
-        context: .
+        files: ./docker-bake.hcl
         push: true
-        tags: kjanat/pdf-extract-with-ocr:latest
-        platforms: linux/amd64,linux/arm/v7,linux/arm64
