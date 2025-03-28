@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR Job Status</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/script.js" defer></script>
+    <link rel="icon" type="image/svg" href="/static/images/KJANAT.svg">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a class="navbar-logo" href="/"><img src="/static/images/KJANAT.svg" width="30" 5 height="30" alt="KJANAT Logo"></a></li>
+                <li><a href="/jobs">Jobs</a></li>
+                <li><a id="api-button">API</a></li>
+                <li><a href="https://github.com/kjanat/pdf-extract-with-ocr" target="_blank">GitHub</a></li>
+            </ul>
+        </nav>
+    
+        <div id="api-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <p>Example <code>curl</code> command:</p>
+                <pre><code id="curl-command"></code></pre>
+            </div>
+        </div>
+
+        <h1>OCR Job Status</h1>
+        <p>Live view of recent jobs (auto-updating)</p>
+    </header>
+
+    <!-- <style>
+        .modal {
+            /* position: fixed; */
+            /* top: 0; */
+            /* left: 0; */
+            /* width: 100%; */
+            /* height: 100%; */
+            /* background-color: rgba(0, 0, 0, 0.7); */
+            /* display: flex; */
+            /* justify-content: center; */
+            /* align-items: center; */
+            /* z-index: 1000; */
+        }
+
+        .modal-content {
+            /* background-color: white; */
+            /* padding: 20px; */
+            /* border-radius: 5px; */
+            /* width: 80%; */
+            /* max-width: 800px; */
+            /* max-height: 80vh; */
+            /* overflow: auto; */
+            /* top: 50%; */
+        }
+    </style> -->
+
+    <main>
+        <div class="button-group">
+            <button class="button" onclick="copyTableToClipboard()">Copy Table to Clipboard</button>
+            <button class="button" onclick="downloadCSV()">Download CSV</button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Task ID</th>
+                        <th>Filename</th>
+                        <th>Status</th>
+                        <th>Method</th>
+                        <th>Pages</th>
+                        <th>Size (MB)</th>
+                        <th>Duration (ms)</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody id="job-table-body"></tbody>
+            </table>
+        </div>
+    </main>
+</body>
+
+</html>
