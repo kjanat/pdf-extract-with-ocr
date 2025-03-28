@@ -1,16 +1,31 @@
-# Flask
-flask
+# Web framework
+Flask
 flask-cors
-Flask-JWT-Extended
 
+# OCR & PDF processing
 pytesseract
 Pillow
 PyMuPDF
-Werkzeug
 
-# Linux
-gunicorn
-gevent
+# Database
+SQLAlchemy
+psycopg2-binary
 
-# Windows
+# Environment variables
+python-dotenv
+
+# Background task queue
+celery
+celery-types
+
+# Redis
+redis
+
+# Production WSGI server
 waitress
+
+# For testing or formatting
+pytest
+black
+typing
+logging

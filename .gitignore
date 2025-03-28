@@ -179,7 +179,17 @@ cython_debug/
 # Tessdata files
 tessdata/
 
-# Docker files
-Dockerfile
-docker-compose.yml
-docker-bake.hcl
+# Visual Studio Code
+.vscode/
+
+# Build cache for dockerx
+.docker-cache/
+
+# Backup files
+*.bak
+
+# PowerShell scripts
+*.ps1
+
+# Temporary files
+local.db

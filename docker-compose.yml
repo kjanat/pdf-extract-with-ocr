@@ -1,0 +1,66 @@
+services:
+  ocr-app:
+    image: kjanat/pdf-extract-with-ocr:latest
+    container_name: flask-api
+    ports:
+      - "8080:80"
+    environment:
+      - IS_DOCKER_CONTAINER=true
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - DATABASE_URL=postgresql://ocruser:ocrpass@db:5432/ocr
+    volumes:
+      - ./temp:/app/temp
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      worker:
+        condition: service_started
+    restart: unless-stopped
+
+  worker:
+    image: kjanat/pdf-extract-with-ocr:worker
+    container_name: celery-worker
+    command: python -m celery -A celery_worker.celery worker --loglevel=info
+    environment:
+      - IS_DOCKER_CONTAINER=true
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - DATABASE_URL=postgresql://ocruser:ocrpass@db:5432/ocr
+    volumes:
+      - ./temp:/app/temp
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  redis:
+    image: redis:latest
+    container_name: redis-queue
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  db:
+    image: postgres:latest
+    container_name: ocr-postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=ocruser
+      - POSTGRES_PASSWORD=ocrpass
+      - POSTGRES_DB=ocr
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ocruser -d ocr"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

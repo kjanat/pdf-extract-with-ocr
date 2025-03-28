@@ -1,0 +1,36 @@
+name: OCR Service CI
+
+on:
+  push:
+    branches: [ docker ]
+  pull_request:
+    branches: [ docker ]
+
+jobs:
+  build-multiarch:
+    name: Build Docker image (multi-arch)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to DockerHub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: kjanat/pdf-extract-with-ocr:latest
+        platforms: linux/amd64,linux/arm/v7,linux/arm64

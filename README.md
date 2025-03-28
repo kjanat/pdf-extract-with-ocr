@@ -1,3 +1,6 @@
+<!-- markdownlint-disable MD033 -->
+<!-- markdownlint-disable MD041 -->
+
 <div align="center">
 
 # PDF Extract with OCR
@@ -6,18 +9,12 @@
 
 <div align="center" style="padding: 2vh 10vw 1vh 10vw; display: flex; flex-basis: auto; flex-wrap: wrap; flex-shrink: 1; flex-flow: row wrap; float: inline-flex; justify-content: space-around; justify-items: center;">
 
-<!--[![GitHub Release](https://img.shields.io/github/v/release/kjanat/pdf-extract-with-ocr?display_name=tag&style=for-the-badge)][2]
-[![GitHub License](https://img.shields.io/github/license/kjanat/pdf-extract-with-ocr?style=for-the-badge)][3]-->
-[![Commits](https://img.shields.io/github/commit-activity/m/kjanat/pdf-extract-with-ocr?label=commits&style=for-the-badge)][4]
-[![GitHub last commit](https://img.shields.io/github/last-commit/kjanat/pdf-extract-with-ocr?style=for-the-badge&display_timestamp=committer)][5]
+[![Commits](https://img.shields.io/github/commit-activity/m/kjanat/pdf-extract-with-ocr?label=commits&style=for-the-badge)][GitHub Commits]
+[![GitHub last commit](https://img.shields.io/github/last-commit/kjanat/pdf-extract-with-ocr?style=for-the-badge&display_timestamp=committer)][GitHub Monthly]
+[![Docker Pulls](https://img.shields.io/docker/pulls/kjanat/pdf-extract-with-ocr?style=for-the-badge)][Docker]
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kjanat/pdf-extract-with-ocr/ci?style=for-the-badge)][Build Status]
 
 </div>
-
-<!--<div align="center">
-
-# PDF Extract with OCR
-
-</div>-->
 
 This project is a Flask-based web application that extracts text from PDF files. It determines whether the PDF contains selectable text or is a scanned document, using [`PyMuPDF`][pymupdf] for direct text extraction and [`Tesseract OCR`][tesseract] for scanned images.
 
@@ -60,19 +57,26 @@ This project is a Flask-based web application that extracts text from PDF files.
     - On Windows, use winget:
 
         ```powershell
-        winget install --id=tesseract-ocr.tesseract
+        'tesseract-ocr.tesseract', 'SQLite.SQLite' | 
+            % { winget install --id=$_ }
         ```
 
     - On macOS, use Homebrew:
 
         ```sh
-        brew install tesseract
+        brew install \
+            tesseract \
+            redis \
+            sqlite
         ```
 
     - On Linux, use your package manager:
 
         ```sh
-        sudo apt-get install tesseract-ocr
+        sudo apt-get install -y \
+            tesseract-ocr \
+            redis-server \
+            sqlite3
         ```
 
 ## Usage
@@ -110,10 +114,10 @@ This project is a Flask-based web application that extracts text from PDF files.
 
 This software and associated documentation files are proprietary and may not be copied, distributed, modified, or used in any manner without prior written permission from the owner.
 
-[1]: #installation
-[2]: https://github.com/kjanat/Hi-Res-Redirector/releases/latest "Latest release"
-[3]: # "Not licensed"
-[4]: https://github.com/kjanat/pdf-extract-with-ocr/commits "Commit History"
-[5]: https://github.com/kjanat/pdf-extract-with-ocr/pulse/monthly "Last activity"
+<!-- [GitHub License]: #license "Not licensed" -->
+[GitHub Commits]: https://github.com/kjanat/pdf-extract-with-ocr/commits "Commit History"
+[GitHub Monthly]: https://github.com/kjanat/pdf-extract-with-ocr/pulse/monthly "Last activity"
+[Docker]: https://hub.docker.com/r/kjanat/pdf-extract-with-ocr
 [tesseract]: https://github.com/tesseract-ocr/tesseract
 [pymupdf]: https://github.com/pymupdf/PyMuPDF
+[Build Status]: https://github.com/kjanat/pdf-extract-with-ocr/actions/workflows/ci.yml "Build Status"
