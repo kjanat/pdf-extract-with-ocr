@@ -10,10 +10,10 @@
 
 <div align="center" style="padding: 2vh 10vw 1vh 10vw; display: flex; flex-basis: auto; flex-wrap: wrap; flex-shrink: 1; flex-flow: row wrap; float: inline-flex; justify-content: space-around; justify-items: center;">
 
-[Commits][GitHub Commits]
-[GitHub last commit][GitHub Monthly]
-[Docker Pulls][Docker]
-[GitHub Actions Workflow Status][Build Status]
+[![Commits](https://img.shields.io/github/commit-activity/m/kjanat/pdf-extract-with-ocr?label=commits&style=for-the-badge)][GitHub Commits]
+[![GitHub last commit](https://img.shields.io/github/last-commit/kjanat/pdf-extract-with-ocr?style=for-the-badge&display_timestamp=committer)][GitHub Monthly]
+[![Docker Pulls](https://img.shields.io/docker/pulls/kjanat/pdf-extract-with-ocr?style=for-the-badge)][Docker]
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kjanat/pdf-extract-with-ocr/ci.yml?style=for-the-badge)][Build Status]
 
 </div>
 

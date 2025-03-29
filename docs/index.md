@@ -3,7 +3,7 @@
 [![Commits](https://img.shields.io/github/commit-activity/m/kjanat/pdf-extract-with-ocr?label=commits&style=for-the-badge)](https://github.com/kjanat/pdf-extract-with-ocr/commits)
 [![GitHub last commit](https://img.shields.io/github/last-commit/kjanat/pdf-extract-with-ocr?style=for-the-badge&display_timestamp=committer)](https://github.com/kjanat/pdf-extract-with-ocr/pulse/monthly)
 [![Docker Pulls](https://img.shields.io/docker/pulls/kjanat/pdf-extract-with-ocr?style=for-the-badge)](https://hub.docker.com/r/kjanat/pdf-extract-with-ocr)
-[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kjanat/pdf-extract-with-ocr/ci?style=for-the-badge)](https://github.com/kjanat/pdf-extract-with-ocr/actions/workflows/ci.yml)
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kjanat/pdf-extract-with-ocr/ci.yml?style=for-the-badge)](https://github.com/kjanat/pdf-extract-with-ocr/actions/workflows/ci.yml)
 
 A Flask-based web application that intelligently extracts text from PDF files. It automatically determines whether the PDF contains selectable text or is a scanned document, using [PyMuPDF](https://github.com/pymupdf/PyMuPDF) for direct text extraction and [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) for scanned images.
 
@@ -18,12 +18,14 @@ A Flask-based web application that intelligently extracts text from PDF files. I
     - Local installation
     <!-- - Direct Docker image usage -->
 - **Multi-architecture Support** - Docker images built for: `amd64`, `arm64`, and `arm/v7`
-- **Web Interface and API Access** - Upload PDFs through a browser or programmatically
+- **Web Interface and API Access** - Upload PDFs through a browser
 
-## 🏃 Quick Start with
+## 📦 Installation
 
 === "Docker Compose"
     The recommended way to run the application is with Docker Compose, which sets up all necessary services (Flask, Redis, PostgreSQL) in a single command.
+
+    <div class="annotate" markdown>
 
     1. Download the [`docker-compose.yml`](https://github.com/kjanat/pdf-extract-with-ocr/blob/docker/docker-compose.yml) file:
 
@@ -31,7 +33,7 @@ A Flask-based web application that intelligently extracts text from PDF files. I
         wget https://raw.githubusercontent.com/kjanat/pdf-extract-with-ocr/docker/docker-compose.yml
         ```
 
-    2. Create a `.env` file (optional - default values will be used if not provided):
+    2. Create a `.env` file optional (1):
 
         ``` plaintext
         # API configuration
@@ -56,8 +58,11 @@ A Flask-based web application that intelligently extracts text from PDF files. I
 
     4. Open your browser and navigate to http://localhost:8080
 
-=== "Clone and Run Locally"
+    </div>
 
+    1.  Default values will be used if not provided
+
+=== "Clone and Run Locally"
     If you prefer to run the application locally without Docker, you can clone the repository and install the required dependencies.
 
     **Prerequisites**
@@ -100,20 +105,20 @@ A Flask-based web application that intelligently extracts text from PDF files. I
 
     1. Clone the repository:
 
-        ```bash
+        ``` bash
         git clone https://github.com/kjanat/pdf-extract-with-ocr.git
         cd pdf-extract-with-ocr
         ```
 
     2. Install the required dependencies:
 
-        ```bash
+        ``` bash
         pip install -r requirements.txt
         ```
 
-    3. Start the flask application on port 8080:
+    3. Start the flask application on port `8080`:
 
-        ```bash
+        ``` bash
         FLASK_RUN_PORT=8080 flask run
         ```
 
@@ -161,29 +166,46 @@ Looking for more detailed information? Check out these guides:
 
 ## 🛠️ Usage
 
-### Web Interface
+### 🌐 Web Interface
 
 1. Access the web interface at http://localhost:8080
 2. Drag and drop PDF files or click to select files
 3. View extracted text in the browser
 
-### API
+### 🔗 API
 
 Use the API to extract text programmatically:
 
-```bash
+``` bash title="Upload PDF"
 curl -X POST -F file=@path/to/your/file.pdf http://localhost:8080/upload
 ```
 
-Response example:
-
-```json
+``` json title="Response example"
 {
   "status": "processing",
   "task_id": "a1b2c3d4-e5f6-7890-abcd-1234567890ab",
   "filename": "example.pdf"
 }
 ```
+
+To view the result, use the `task_id`:
+
+``` bash title="View result"
+curl http://localhost:8080/api/result/a1b2c3d4-e5f6-7890-abcd-1234567890ab
+```
+
+``` json title="Response example"
+{
+  "text": "Extracted text from the PDF here...",
+  "status": "success",
+  "method": "tesseract",
+  "filename": "example.pdf",
+  "datetime": "2025-03-21T12:34:56.789012+00:00",
+  "duration_ms": 12.3
+}
+```
+
+The full api documentation is available here: [API Documentation][API].
 
 ## 📋 Job History
 
@@ -194,3 +216,5 @@ The application maintains a history of processing jobs, which you can view at ht
 © 2025 Kaj Kowalski. All Rights Reserved.
 
 This software and associated documentation files are proprietary. Private use is permitted without restrictions. For commercial use, distribution, or modification, prior written approval from the owner is required.
+
+[API]: api.md "API Documentation"
