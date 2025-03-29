@@ -191,5 +191,13 @@ tessdata/
 # PowerShell scripts
 *.ps1
 
-# Temporary files
+# Database files
 local.db
+
+# Temporary files
+temp/
+uploads/
+
+requirements-mkdocs.txt
+
+overrides/.icons/bootstrap/

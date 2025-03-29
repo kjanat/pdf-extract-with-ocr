@@ -9,25 +9,27 @@ variable "IMAGE_NAME" {
 
 // Common build settings
 group "default" {
-  targets = ["ocr-app", "worker"]
+  targets = ["api", "worker"]
 }
 
 // Base target with common settings
 target "base" {
   context = "."
   platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7"]
+  cache-from = ["type=registry,ref=${REGISTRY}/${IMAGE_NAME}:buildcache"]
+  cache-to = ["type=registry,ref=${REGISTRY}/${IMAGE_NAME}:buildcache,mode=max"]
 }
 
-target "ocr-app" {
+target "api" {
   inherits = ["base"]
   dockerfile = "Dockerfile"
-  tags = ["${REGISTRY}/${IMAGE_NAME}:latest"]
+  tags = ["${REGISTRY}/${IMAGE_NAME}:api-latest"]
   output = ["type=registry"]
 }
 
 target "worker" {
   inherits = ["base"]
   dockerfile = "Dockerfile"
-  tags = ["${REGISTRY}/${IMAGE_NAME}:worker"]
+  tags = ["${REGISTRY}/${IMAGE_NAME}:worker-latest"]
   output = ["type=registry"]
 }

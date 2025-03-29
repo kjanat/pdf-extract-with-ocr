@@ -40,7 +40,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tesseract-ocr-nld \
     libpq5 \
     && rm -rf /var/lib/apt/lists/* \
-    && mkdir -p /app/temp
+    && mkdir -p /app/uploads
 
 # Install Python dependencies with cache
 COPY --from=builder /wheels /wheels
@@ -52,4 +52,4 @@ RUN pip install --upgrade pip \
 COPY . .
 
 EXPOSE 80
-CMD ["python3", "main.py"]
+CMD ["python3", "app.py"]

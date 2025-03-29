@@ -38,8 +38,8 @@ def upload_pdf():
         return jsonify({"error": "No selected file"}), 400
 
     unique_filename = f"{uuid.uuid4()}.{file.filename.split('.')[-1]}"
-    temp_path = os.path.join("temp", unique_filename)
-    os.makedirs("temp", exist_ok=True)
+    temp_path = os.path.join("uploads", unique_filename)
+    os.makedirs("uploads", exist_ok=True)
     file.save(temp_path)
 
     task = process_pdf_task.delay(temp_path)
