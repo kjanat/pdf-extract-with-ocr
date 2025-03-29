@@ -11,10 +11,15 @@ temp/
 tessdata/
 venv/
 temp/
+uploads/
+docs/
+overrides/
 
 README.md
+mkdocs.yml
 
 *.bak
 *.ps1
 
 local.db
+requirements-mkdocs.txt

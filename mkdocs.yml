@@ -1,0 +1,136 @@
+site_name: PDF Extract with OCR
+site_url: https://kjanat.github.io/pdf-extract-with-ocr
+site_description: Documentatie van Kaj op het gebied van geneeskunde, psychiatrie en web development.
+site_author: kjanat
+copyright: Copyright &copy; Kaj
+repo_url: https://github.com/kjanat/pdf-extract-with-ocr
+repo_name: kjanat/pdf-extract-with-ocr
+dev_addr: 0.0.0.0:8088
+theme:
+  name: material
+  language: en
+  custom_dir: overrides
+  favicon: assets/KJANAT.svg
+  logo: assets/KJANAT.svg
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      primary: indigo
+      accent: light blue
+      toggle:
+        icon: custom/eye-automatic
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: light blue
+      toggle:
+        icon: material/eye
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: light blue
+      toggle:
+        icon: material/eye-outline
+        name: Switch to system preference
+  font:
+    text: "Noto Sans"
+    code: "Noto Sans Mono"
+  icon:
+    logo: kjanat/icon
+    repo: material/git
+    # edit: material/tools
+    # view: material/raw
+    admonition:
+      example: material/image-outline
+      danger: material/bell-alert
+      tip: material/thumb-up-outline #fontawesome/regular/thumbs-up
+    annotation: material/information-slab-circle
+    previous: material/chevron-left
+    next: material/chevron-right
+  features:
+    - navigation.instant
+    - navigation.instant.prefetch # Insiders
+    - navigation.instant.progress
+    - navigation.tracking
+    # - navigation.tabs
+    # - navigation.tabs.sticky
+    - navigation.path # Insiders
+    # - navigation.prune
+    - navigation.expand
+    - navigation.indexes
+    - navigation.sections
+    - toc.follow
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - header.autohide
+    - navigation.footer
+    - content.action.view
+    - content.action.edit
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+# watch:
+#   - includes
+plugins:
+  - search
+  - git-revision-date-localized:
+      type: date
+  # - git-authors
+extra:
+  generator: false
+extra_css:
+  - stylesheets/extra.css
+extra_javascript:
+  - javascripts/extra.js
+markdown_extensions:
+
+  # Python Markdown
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+  # Python Markdown Extensions
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      options:
+        custom_icons:
+          - overrides/.icons
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+  - pymdownx.magiclink
+  # :
+  #     - user: kjanat
+  #     - repo: pdf-extract-with-ocr

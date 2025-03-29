@@ -1,66 +1,67 @@
+# Common healthcheck settings
+x-healthcheck: &default-healthcheck
+  interval: 5s
+  timeout: 5s
+  retries: 5
+
 services:
-  ocr-app:
-    image: kjanat/pdf-extract-with-ocr:latest
-    container_name: flask-api
+  api:
+    image: kjanat/pdf-extract-with-ocr:api-latest
+    container_name: pdf-extract-api
     ports:
-      - "8080:80"
-    environment:
-      - IS_DOCKER_CONTAINER=true
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - DATABASE_URL=postgresql://ocruser:ocrpass@db:5432/ocr
+      - "${API_PORT:-8080}:80"
+    env_file:
+      - .env
     volumes:
-      - ./temp:/app/temp
+      - ${UPLOADS_DIR:-./uploads}:/app/uploads
     depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      worker:
-        condition: service_started
+      - db
+      - redis
+      - worker
     restart: unless-stopped
+    networks:
+      - app-network
 
   worker:
-    image: kjanat/pdf-extract-with-ocr:worker
-    container_name: celery-worker
-    command: python -m celery -A celery_worker.celery worker --loglevel=info
-    environment:
-      - IS_DOCKER_CONTAINER=true
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - DATABASE_URL=postgresql://ocruser:ocrpass@db:5432/ocr
+    image: kjanat/pdf-extract-with-ocr:worker-latest
+    container_name: pdf-extract-celery-worker
+    env_file:
+      - .env
     volumes:
-      - ./temp:/app/temp
+      - ${UPLOADS_DIR:-./uploads}:/app/uploads
     depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - db
+      - redis
+    command: python -m celery -A celery_worker.celery worker --loglevel=info
     restart: unless-stopped
+    networks:
+      - app-network
 
   redis:
     image: redis:latest
-    container_name: redis-queue
+    container_name: pdf-extract-redis
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      <<: *default-healthcheck
     restart: unless-stopped
 
   db:
     image: postgres:latest
-    container_name: ocr-postgres
+    container_name: pdf-extract-postgres-db
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=ocruser
-      - POSTGRES_PASSWORD=ocrpass
-      - POSTGRES_DB=ocr
+    env_file:
+      - .env
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ocruser -d ocr"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ocruser} -d ${POSTGRES_DB:-ocr}"]
+      <<: *default-healthcheck
     restart: unless-stopped
+    networks:
+      - app-network
 
 volumes:
   postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
