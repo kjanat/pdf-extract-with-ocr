@@ -1,5 +1,5 @@
 site_name: PDF Extract with OCR
-site_url: https://kjanat.github.io/pdf-extract-with-ocr
+site_url: https://pdf-extract.kjanat.com
 site_description: Documentatie van Kaj op het gebied van geneeskunde, psychiatrie en web development.
 site_author: kjanat
 copyright: Copyright &copy; Kaj
@@ -66,6 +66,7 @@ theme:
     - navigation.indexes
     - navigation.sections
     - toc.follow
+    - toc.integrate
     - navigation.top
     - search.suggest
     - search.highlight
@@ -76,13 +77,15 @@ theme:
     - content.code.copy
     - content.code.annotate
     - content.tabs.link
+    - content.tooltips
 # watch:
 #   - includes
 plugins:
   - search
+  - privacy
   - git-revision-date-localized:
       type: date
-  # - git-authors
+  - git-authors
 extra:
   generator: false
 extra_css:
@@ -130,7 +133,9 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
-  - pymdownx.magiclink
-  # :
-  #     - user: kjanat
-  #     - repo: pdf-extract-with-ocr
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      repo_url_shortener: true
+      user: kjanat
+      repo: pdf-extract-with-ocr
+  # - pymdownx.saneheaders
