@@ -1,5 +1,4 @@
 <!-- markdownlint-disable MD033 -->
-
 <!-- markdownlint-disable MD041 -->
 
 <div align="center">
@@ -13,7 +12,7 @@
 [![Commits](https://img.shields.io/github/commit-activity/m/kjanat/pdf-extract-with-ocr?label=commits&style=for-the-badge)][GitHub Commits]
 [![GitHub last commit](https://img.shields.io/github/last-commit/kjanat/pdf-extract-with-ocr?style=for-the-badge&display_timestamp=committer)][GitHub Monthly]
 [![Docker Pulls](https://img.shields.io/docker/pulls/kjanat/pdf-extract-with-ocr?style=for-the-badge)][Docker]
-[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kjanat/pdf-extract-with-ocr/ci.yml?style=for-the-badge)][Build Status]
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kjanat/pdf-extract-with-ocr/docker-publish.yml?style=for-the-badge)][Build Status]
 
 </div>
 
@@ -21,8 +20,8 @@ This project is a Flask-based web application that extracts text from PDF files.
 
 ## Features
 
-- Extracts text from PDFs with selectable text using 
-- Detects scanned PDFs and applies OCR with 
+- Extracts text from PDFs with selectable text using
+- Detects scanned PDFs and applies OCR with
 - Automatic Tesseract installation check and language data download
 - Returns extracted text in a structured JSON format
 - Provides processing time and extraction method details
@@ -31,13 +30,14 @@ This project is a Flask-based web application that extracts text from PDF files.
 
 1. Clone the repository:
 
-   ```sh
+   ``` sh
    git clone https://github.com/kjanat/pdf-extract-with-ocr.git
    cd pdf-extract-with-ocr
    ```
+
 2. Create a virtual environment and activate it:
 
-   ```sh
+   ``` sh
    python -m venv venv
 
    # On macOS/Linux
@@ -46,30 +46,34 @@ This project is a Flask-based web application that extracts text from PDF files.
    # On Windows
    venv\Scripts\activate
    ```
+
 3. Install the required dependencies:
 
-   ```sh
+   ``` sh
    pip install -U -r requirements.txt
    ```
+
 4. Install Tesseract OCR:
 
    - On Windows, use winget:
 
-     ```powershell
+     ``` powershell
      'tesseract-ocr.tesseract', 'SQLite.SQLite' | 
          % { winget install --id=$_ }
      ```
+
    - On macOS, use Homebrew:
 
-     ```sh
+     ``` sh
      brew install \
          tesseract \
          redis \
          sqlite
      ```
+
    - On Linux, use your package manager:
 
-     ```sh
+     ``` sh
      sudo apt-get install -y \
          tesseract-ocr \
          redis-server \
@@ -80,14 +84,16 @@ This project is a Flask-based web application that extracts text from PDF files.
 
 1. Run the Flask application:
 
-   ```sh
+   ``` sh
    python app.py
    ```
+
 2. Open your browser and navigate to `http://127.0.0.1:5000` to access the web interface and upload a pdf, or upload a PDF file through the `/upload` endpoint:
 
-   ```sh
+   ``` sh
    curl -X POST -F file=@path/to/your/file.pdf http://127.0.0.1:5000/upload
    ```
+
 3. The API will return a JSON response with the extracted text, status, method used, and processing duration.
 
 ## Docker Usage
@@ -98,15 +104,16 @@ The easiest way to run the full stack is with Docker Compose:
 
 1. Download the  file:
 
-   ```sh
+   ``` sh
    wget https://raw.githubusercontent.com/kjanat/pdf-extract-with-ocr/docker/docker-compose.yml
    ```
+
 2. Adjust the `docker-compose.yml` file if necessary. You can change the ports or other configurations as needed.
 
-   ```yaml
+   ``` yaml
    services:
      api:
-       image: kjanat/pdf-extract-with-ocr:api-latest
+       image: kjanat/pdf-extract-with-ocr:latest
        ports:
          - "8080:80"
        environment:
@@ -114,7 +121,7 @@ The easiest way to run the full stack is with Docker Compose:
          - CELERY_BROKER_URL=redis://redis:6379/0
          - DATABASE_URL=postgresql://ocruser:ocrpass@db:5432/ocr
      worker:
-       image: kjanat/pdf-extract-with-ocr:worker-latest
+       image: kjanat/pdf-extract-with-ocr:latest
        command: celery -A main.celery worker --loglevel=info
      redis:
        image: redis:latest
@@ -125,9 +132,10 @@ The easiest way to run the full stack is with Docker Compose:
          POSTGRES_PASSWORD: password
          POSTGRES_DB: pdf_extract_db
    ```
+
 3. Start the services:
 
-   ```sh
+   ``` sh
    docker-compose up
    ```
 
@@ -143,7 +151,7 @@ This starts four services:
 You can also run just the API container:
 
 ```sh
-docker run -p 8080:80 -e IS_DOCKER_CONTAINER=true kjanat/pdf-extract-with-ocr:api-latest
+docker run -p 8080:80 -e IS_DOCKER_CONTAINER=true kjanat/pdf-extract-with-ocr:latest-full
 ```
 
 ### Supported Architectures
@@ -158,7 +166,7 @@ Docker will automatically pull the correct image for your system architecture.
 
 ## Example Response
 
-```json
+``` json
 {
    "body": "Extracted text from the PDF here...",
    "status": "success",
@@ -180,7 +188,4 @@ This software and associated documentation files are proprietary. Private use is
 [GitHub Commits]: https://github.com/kjanat/pdf-extract-with-ocr/commits
 [GitHub Monthly]: https://github.com/kjanat/pdf-extract-with-ocr/pulse/monthly
 [Docker]: https://hub.docker.com/r/kjanat/pdf-extract-with-ocr
-[tesseract]: https://github.com/tesseract-ocr/tesseract
-[pymupdf]: https://github.com/pymupdf/PyMuPDF
 [Build Status]: https://github.com/kjanat/pdf-extract-with-ocr/actions/workflows/ci.yml
-[docker-compose]: docker-compose.yml

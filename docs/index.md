@@ -35,7 +35,7 @@ A Flask-based web application that intelligently extracts text from PDF files. I
 
     2. Create a `.env` file optional (1):
 
-        ``` plaintext
+        ``` hcl title=".env"
         # API configuration
         API_PORT=8080
         UPLOADS_DIR=./uploads
@@ -78,7 +78,7 @@ A Flask-based web application that intelligently extracts text from PDF files. I
 
         === "Linux"
 
-            ``` sh
+            ``` sh title="Debian/Ubuntu"
             sudo apt-get install -y \
                 tesseract-ocr \
                 redis-server \
@@ -87,14 +87,14 @@ A Flask-based web application that intelligently extracts text from PDF files. I
         
         === "Windows"
         
-            ``` powershell
+            ``` powershell title="PowerShell (Launch as Administrator)"
             'tesseract-ocr.tesseract', 'SQLite.SQLite' | 
                 % { winget install --id=$_ }
             ```
         
         === "macOS"
 
-            ``` sh
+            ``` sh title="Homebrew"
             brew install \
                 tesseract \
                 redis \
