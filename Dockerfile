@@ -49,8 +49,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install Python dependencies with cache
 COPY --from=builder /wheels /wheels
-RUN pip install --upgrade pip --root-user-action \
-    && pip install --no-index --find-links=/wheels -r requirements.txt --root-user-action \
+RUN pip install --root-user-action --upgrade pip \
+    && pip install --root-user-action --no-index --find-links=/wheels -r requirements.txt \
     && rm -rf /wheels
 
 # Copy application code last to maximize cache usage for previous layers

@@ -181,6 +181,6 @@ jobs:
       with:
         files: ./docker-bake.hcl
         push: ${{ github.event_name != 'pull_request' }}
-        set: |
-          base.cache-from=type=registry,ref=${{ github.actor }}/${{ env.IMAGE_NAME }}:buildcache
-          base.cache-to=type=registry,ref=${{ github.actor }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
+        # set: |
+        #   base.cache-from=type=registry,ref=${{ github.actor }}/${{ env.IMAGE_NAME }}:buildcache
+        #   base.cache-to=type=registry,ref=${{ github.actor }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
