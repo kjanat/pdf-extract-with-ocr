@@ -3,7 +3,7 @@
 [![Commits](https://img.shields.io/github/commit-activity/m/kjanat/pdf-extract-with-ocr?label=commits&style=for-the-badge)](https://github.com/kjanat/pdf-extract-with-ocr/commits)
 [![GitHub last commit](https://img.shields.io/github/last-commit/kjanat/pdf-extract-with-ocr?style=for-the-badge&display_timestamp=committer)](https://github.com/kjanat/pdf-extract-with-ocr/pulse/monthly)
 [![Docker Pulls](https://img.shields.io/docker/pulls/kjanat/pdf-extract-with-ocr?style=for-the-badge)](https://hub.docker.com/r/kjanat/pdf-extract-with-ocr)
-[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kjanat/pdf-extract-with-ocr/docker-publish.yml?style=for-the-badge)](https://github.com/kjanat/pdf-extract-with-ocr/actions/workflows/docker-publish.yml)
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kjanat/pdf-extract-with-ocr/docker.yml?style=for-the-badge)](https://github.com/kjanat/pdf-extract-with-ocr/actions/workflows/docker.yml)
 
 A Flask-based web application that intelligently extracts text from PDF files. It automatically determines whether the PDF contains selectable text or is a scanned document, using [PyMuPDF](https://github.com/pymupdf/PyMuPDF) for direct text extraction and [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) for scanned images.
 

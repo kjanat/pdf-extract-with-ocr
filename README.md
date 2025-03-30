@@ -12,7 +12,7 @@
 [![Commits](https://img.shields.io/github/commit-activity/m/kjanat/pdf-extract-with-ocr?label=commits&style=for-the-badge)][GitHub Commits]
 [![GitHub last commit](https://img.shields.io/github/last-commit/kjanat/pdf-extract-with-ocr?style=for-the-badge&display_timestamp=committer)][GitHub Monthly]
 [![Docker Pulls](https://img.shields.io/docker/pulls/kjanat/pdf-extract-with-ocr?style=for-the-badge)][Docker]
-[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kjanat/pdf-extract-with-ocr/docker-publish.yml?style=for-the-badge)][Build Status]
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kjanat/pdf-extract-with-ocr/docker.yml?style=for-the-badge)][Build Status]
 
 </div>
 
@@ -188,4 +188,4 @@ This software and associated documentation files are proprietary. Private use is
 [GitHub Commits]: https://github.com/kjanat/pdf-extract-with-ocr/commits
 [GitHub Monthly]: https://github.com/kjanat/pdf-extract-with-ocr/pulse/monthly
 [Docker]: https://hub.docker.com/r/kjanat/pdf-extract-with-ocr
-[Build Status]: https://github.com/kjanat/pdf-extract-with-ocr/actions/workflows/docker-publish.yml
+[Build Status]: https://github.com/kjanat/pdf-extract-with-ocr/actions/workflows/docker.yml
