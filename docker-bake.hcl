@@ -21,8 +21,8 @@ target "base" {
     // "linux/arm/v7",
     // "linux/arm/v6"
   ]
-  cache-from = "type=gha"
-  cache-to = "type=gha,mode=max"
+  cache-from = ["type=gha"]
+  cache-to = ["type=gha,mode=max"]
 }
 
 target "asynchronous" {
