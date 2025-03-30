@@ -15,12 +15,12 @@ target "base" {
   context = "."
   platforms = [
     "linux/amd64",
+    // "linux/amd64/v2",
+    // "linux/amd64/v3",
     "linux/arm64",
-    "linux/arm/v7",
-    "linux/arm/v6"
+    // "linux/arm/v7",
+    // "linux/arm/v6"
   ]
-  // cache-from = ["type=registry,ref=${REGISTRY}/${IMAGE_NAME}:buildcache"]
-  // cache-to = ["type=registry,ref=${REGISTRY}/${IMAGE_NAME}:buildcache,mode=max"]
 }
 
 target "asynchronous" {
