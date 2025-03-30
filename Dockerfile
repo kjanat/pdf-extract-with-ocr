@@ -25,6 +25,11 @@ RUN pip wheel --wheel-dir=/wheels -r requirements.txt
 # Final stage
 FROM python:3-slim
 
+# Add metadata labels
+LABEL org.opencontainers.image.description="PDF Extract with OCR: A web service that extracts text from PDF files using direct extraction for text PDFs and Tesseract OCR for scanned documents. Provides both API endpoints and web interface for text extraction."
+LABEL org.opencontainers.image.source="https://github.com/kjanat/pdf-extract-with-ocr"
+LABEL org.opencontainers.image.licenses="Proprietary"
+
 WORKDIR /app
 
 # Copy requirements first to maintain layer separation
