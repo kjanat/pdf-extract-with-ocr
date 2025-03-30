@@ -16,7 +16,8 @@ target "base" {
   platforms = [
     "linux/amd64",
     "linux/arm64",
-    "linux/arm/v7"
+    "linux/arm/v7",
+    "linux/arm/v6"
   ]
   // cache-from = ["type=registry,ref=${REGISTRY}/${IMAGE_NAME}:buildcache"]
   // cache-to = ["type=registry,ref=${REGISTRY}/${IMAGE_NAME}:buildcache,mode=max"]
@@ -27,11 +28,6 @@ target "asynchronous" {
   dockerfile = "Dockerfile"
   tags = ["${REGISTRY}/${IMAGE_NAME}:latest"]
   output = ["type=registry"]
-  // build-args = {
-  //   "BUILD_VERSION" = "${BUILD_VERSION}"
-  //   "BUILD_DATE" = "${BUILD_DATE}"
-  //   "GIT_COMMIT" = "${GIT_COMMIT}"
-  // }
 }
 
 target "synchronous" {
