@@ -21,12 +21,6 @@ on:
 
 jobs:
   build-github-container-registry:
-    env:
-      # Use docker.io for Docker Hub if empty
-      REGISTRY: ghcr.io
-      # github.repository as <account>/<repo>
-      IMAGE_NAME: ${{ github.repository }}
-
     # This job builds and publishes the Docker image to the GitHub Container Registry.
     name: Build Docker images (GitHub Container Registry)
     runs-on: ubuntu-latest
@@ -36,6 +30,23 @@ jobs:
       # This is used to complete the identity challenge
       # with sigstore/fulcio when running outside of PRs.
       id-token: write
+
+    env:
+      # Use docker.io for Docker Hub if empty
+      REGISTRY: ghcr.io
+      # github.repository as <account>/<repo>
+      IMAGE_NAME: ${{ github.repository }}
+
+    strategy:
+      matrix:
+        platform:
+          - linux/amd64
+          # - linux/386
+          # - linux/arm/v6
+          # - linux/arm/v7
+          - linux/arm64
+          # - linux/amd64/v2
+          # - linux/amd64/v3
 
     steps:
       - name: Checkout repository
@@ -75,41 +86,30 @@ jobs:
 
     #   # Build and push Docker image with Buildx (don't push on PR)
     #   # https://github.com/docker/build-push-action
-    #   - name: Build and push Docker image
-    #     id: build-and-push
-    #     uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
-    #     with:
-    #       context: .
-    #       push: ${{ github.event_name != 'pull_request' }}
-    #       tags: ${{ steps.meta.outputs.tags }}
-    #       labels: ${{ steps.meta.outputs.labels }}
-    #       cache-from: type=gha
-    #       cache-to: type=gha,mode=max
-
-      # Replace the build-and-push step with:
-      - name: Build and push asynchronous image
-        id: build-and-push-async
+      - name: Build and push Docker image
+        id: build-and-push
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
         with:
           context: .
           file: ./Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          platforms: ${{ matrix.platform }}
+          tags: ${{ steps.meta.outputs.tags }},${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          platforms: linux/arm64,linux/amd64 #,linux/amd64/v2,linux/amd64/v3,linux/arm/v7,linux/arm/v6
-      
-      - name: Build and push synchronous image
-        id: build-and-push-sync
-        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
-        with:
-          context: .
-          file: ./Dockerfile-full
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-full
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          platforms: linux/arm64,linux/amd64 #,linux/amd64/v2,linux/amd64/v3,linux/arm/v7,linux/arm/v6
+
+    #   - name: Build and push Docker image
+    #     id: build-and-push
+    #     uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
+    #     with:
+    #       context: .
+    #       file: ./Dockerfile
+    #       push: ${{ github.event_name != 'pull_request' }}
+    #       tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+    #       cache-from: type=gha
+    #       cache-to: type=gha,mode=max
+    #       platforms: linux/arm64,linux/amd64 #,linux/amd64/v2,linux/amd64/v3,linux/arm/v7,linux/arm/v6
 
     #   - name: Build and push Docker images
     #     uses: docker/bake-action@v6
@@ -128,35 +128,25 @@ jobs:
       # repository is public to avoid leaking data.  If you would like to publish
       # transparency data even for private images, pass --force to cosign below.
       # https://github.com/sigstore/cosign
-      - name: Sign the published Docker image (sync)
+      - name: Sign the published Docker image
         if: ${{ github.event_name != 'pull_request' }}
         env:
           # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
           TAGS: ${{ steps.meta.outputs.tags }}
-          DIGEST: ${{ steps.build-and-push-sync.outputs.digest }}
-        # This step uses the identity token to provision an ephemeral certificate
-        # against the sigstore community Fulcio instance.
-        run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
-
-      - name: Sign the published Docker image (async)
-        if: ${{ github.event_name != 'pull_request' }}
-        env:
-          # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
-          TAGS: ${{ steps.meta.outputs.tags }}
-          DIGEST: ${{ steps.build-and-push-async.outputs.digest }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
 
   build-dockerhub:
+    # This job builds and publishes the Docker image to Docker Hub.
+    name: Build Docker images (Docker Hub)
+    runs-on: ubuntu-latest
     env:
       # Use ghcr.io for GitHub Container Registry
       REGISTRY: docker.io
       # github.repository as <account>/<repo>
       IMAGE_NAME: ${{ github.repository }}
-    # This job builds and publishes the Docker image to Docker Hub.
-    name: Build Docker images (Docker Hub)
-    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository

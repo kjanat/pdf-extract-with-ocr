@@ -4,8 +4,8 @@ This guide explains how to run PDF Extract with OCR using Docker Compose, which 
 
 ## Prerequisites
 
-- [Docker](https://docs.docker.com/get-docker/) installed on your system
-- [Docker Compose](https://docs.docker.com/compose/install/) installed on your system
+- [Docker][Docker Install] installed on your system
+- [Docker Compose][Docker Compose Install] installed on your system
 - Basic knowledge of Docker and Docker Compose
 
 ## Quick Start
@@ -13,14 +13,14 @@ This guide explains how to run PDF Extract with OCR using Docker Compose, which 
 <div class="annotate" markdown>
 
 1. Clone the repository or download the docker-compose.yml file
-2. Create a `.env` file in the same directory (1) (see [Environment Variables](#environment-variables) below)
+2. Create a `.env` file in the same directory (1) (optional, see [Environment Variables](#environment-variables) below)
 3. Run the application:
 
 </div>
 
-1. This is optional! If no .env file is provided, the default values will be used.
+1. If no `.env` file is provided, the default values will be used.
 
-```bash
+```sh
 docker-compose up -d
 ```
 
@@ -28,26 +28,15 @@ This will start all required services and make the API available at [`http://loc
 
 ## Environment Variables
 
-Create a `.env` file in the same directory as your docker-compose.yml with the following environment variables:
+Create a `.env` file in the same directory as your `docker-compose.yml` with the following environment variables:
 
-```yaml
-# API configuration
-API_PORT=8080                         # Port for the API service
-UPLOADS_DIR=./uploads                 # Directory to store uploaded PDFs
-
-# Database configuration
-POSTGRES_USER=ocruser                 # PostgreSQL username
-POSTGRES_PASSWORD=ocrpass             # PostgreSQL password
-POSTGRES_DB=ocr                       # PostgreSQL database name
-DATABASE_URL=postgresql://ocruser:ocrpass@db:5432/ocr
-
-# Celery configuration
-CELERY_BROKER_URL=redis://redis:6379/0
+```yaml title=".env"
+--8<-- ".env.example"
 ```
 
 ## Services Overview
 
-The docker-compose.yml file defines four services:
+The [`docker-compose.yml`](#docker-composeyml) file defines four services:
 
 ### API Service
 
@@ -112,9 +101,9 @@ db:
 
 The Docker images are built for multiple architectures:
 
-- linux/amd64 (x86_64)
-- linux/arm64 (aarch64)
-- linux/arm/v7 (armv7)
+- `linux/amd64` (x86_64)
+- `linux/arm64` (aarch64)
+<!-- - `linux/arm/v7` (armv7) -->
 
 Docker will automatically pull the correct image for your system architecture.
 
@@ -125,13 +114,13 @@ Once the services are up and running:
 1. Access the web interface at [`http://localhost:8080`](http://localhost:8080)
 2. Use the API endpoint for programmatic access:
 
-```bash
-curl -X POST -F file=@path/to/your/file.pdf http://localhost:8080/upload
+```sh
+curl -X POST -F "file=@path/to/your/file.pdf" http://localhost:8080/upload
 ```
 
 ## Management Commands
 
-```bash
+```sh
 # Start all services
 docker-compose up -d
 
@@ -156,10 +145,24 @@ docker-compose up -d --build
 
 If you encounter issues:
 
-1. Check the logs: `docker-compose logs -f`
-2. Verify that all services are running: `docker-compose ps`
+1. Check the logs: `#!sh docker-compose logs -f`
+2. Verify that all services are running: `#!sh docker-compose ps`
 3. Make sure your `.env` file has the correct configuration
 4. Check if ports are already in use on your host system
 5. Ensure the uploads directory has the correct permissions
 
-For more information about the application, refer to the [GitHub repository](https://github.com/kjanat/pdf-extract-with-ocr).
+For more information about the application, refer to the [GitHub repository][Repository].
+
+## Reference files
+
+### [`docker-compose.yml`][docker-compose.yml]
+
+``` yaml title="docker-compose.yml"
+--8<-- "docker-compose.yml"
+```
+
+### [`.env`][.env.example]
+
+``` yaml title=".env.example"
+--8<-- ".env.example"
+```

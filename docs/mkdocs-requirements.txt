@@ -1,6 +1,5 @@
 mkdocs-material[imaging]
 mkdocs-git-revision-date-localized-plugin
 pymdown-extensions
-
 mkdocs-git-committers-plugin-2
 # mkdocs-git-authors-plugin

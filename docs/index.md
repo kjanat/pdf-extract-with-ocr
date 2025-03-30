@@ -27,7 +27,7 @@ A Flask-based web application that intelligently extracts text from PDF files. I
 
     <div class="annotate" markdown>
 
-    1. Download the [`docker-compose.yml`](https://github.com/kjanat/pdf-extract-with-ocr/blob/docker/docker-compose.yml) file:
+    1. Download the [`docker-compose.yml`][docker-compose.yml] file:
 
         ```bash
         wget https://raw.githubusercontent.com/kjanat/pdf-extract-with-ocr/docker/docker-compose.yml
@@ -76,7 +76,7 @@ A Flask-based web application that intelligently extracts text from PDF files. I
 
     ??? tip "Install Dependencies"
 
-        === "Linux"
+        === ":fontawesome-brands-linux: Linux (Debian/Ubuntu)"
 
             ``` sh title="Debian/Ubuntu"
             sudo apt-get install -y \
@@ -85,14 +85,14 @@ A Flask-based web application that intelligently extracts text from PDF files. I
                 sqlite3
             ```
         
-        === "Windows"
+        === ":fontawesome-brands-windows: Windows"
         
             ``` powershell title="PowerShell (Launch as Administrator)"
             'tesseract-ocr.tesseract', 'SQLite.SQLite' | 
                 % { winget install --id=$_ }
             ```
         
-        === "macOS"
+        === ":fontawesome-brands-apple: macOS"
 
             ``` sh title="Homebrew"
             brew install \
