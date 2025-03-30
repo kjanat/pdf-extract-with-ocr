@@ -27,7 +27,7 @@ Install the required system dependencies based on your operating system:
 
     ```powershell
     # Using winget (run as Administrator)
-    'tesseract-ocr.tesseract', 'SQLite.SQLite' | 
+    'tesseract-ocr.tesseract', 'SQLite.SQLite' |
         % { winget install --id=$_ }
     ```
 
@@ -160,10 +160,10 @@ For simple usage where background processing isn't needed:
     ```sh
     # Activate the virtual environment (if not already activated)
     source venv/bin/activate
-    
+
     # Set the port (optional, defaults to 5000)
     export FLASK_RUN_PORT=8080
-    
+
     # Run the application
     python app.py
     # Or alternatively:

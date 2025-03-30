@@ -124,23 +124,23 @@ A Flask-based web application that intelligently extracts text from PDF files. I
 
     4. Open your browser and navigate to http://localhost:8080
 
-<!-- === "Direct Docker"
+=== "Direct Docker"
 
     If you prefer to run the application directly with Docker:
 
     1. Pull the latest image:
 
         ```bash
-        docker pull kjanat/pdf-extract-with-ocr:api-latest
+        docker pull kjanat/pdf-extract-with-ocr:latest
         ```
 
     2. Run the container:
 
         ```bash
-        docker run -d -p 8080:8080 kjanat/pdf-extract-with-ocr:api-latest
+        docker run -d -p 8080:80 -e IS_DOCKER_CONTAINER=true kjanat/pdf-extract-with-ocr:latest
         ```
 
-    3. Open your browser and navigate to [http://localhost:8080](http://localhost:8080) -->
+    3. Open your browser and navigate to [http://localhost:8080](http://localhost:8080)
 
 <!-- === "GitHub Codespaces"
 
@@ -217,4 +217,4 @@ The application maintains a history of processing jobs, which you can view at ht
 
 This software and associated documentation files are proprietary. Private use is permitted without restrictions. For commercial use, distribution, or modification, prior written approval from the owner is required.
 
-[API]: api.md "API Documentation"
+[API]: api/endpoints.md "API Documentation"
