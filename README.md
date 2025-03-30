@@ -188,4 +188,4 @@ This software and associated documentation files are proprietary. Private use is
 [GitHub Commits]: https://github.com/kjanat/pdf-extract-with-ocr/commits
 [GitHub Monthly]: https://github.com/kjanat/pdf-extract-with-ocr/pulse/monthly
 [Docker]: https://hub.docker.com/r/kjanat/pdf-extract-with-ocr
-[Build Status]: https://github.com/kjanat/pdf-extract-with-ocr/actions/workflows/ci.yml
+[Build Status]: https://github.com/kjanat/pdf-extract-with-ocr/actions/workflows/docker-publish.yml
