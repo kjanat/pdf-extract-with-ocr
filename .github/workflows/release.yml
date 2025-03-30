@@ -1,0 +1,144 @@
+name: Auto Versioning and Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump_type:
+        description: 'Version bump type (patch, minor, major, prerelease)'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      production_ready:
+        description: 'Is this a production-ready?'
+        required: true
+        default: false
+        type: boolean
+
+jobs:
+  version-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y node-semver jq
+
+      - name: Configure Git
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+      - name: Bump version
+        id: bump_version
+        run: |
+          # Read current version from version.txt
+          CURRENT_VERSION=$(cat version.txt || echo "0.1.0")
+          echo "Current version: $CURRENT_VERSION"
+
+          # If not production ready, prepend "pre" to the ${{ github.event.inputs.bump_type }}
+          if ${{ github.event.inputs.production_ready }}; then
+            BUMP_TYPE="${{ github.event.inputs.bump_type }}"
+          else
+            BUMP_TYPE="pre${{ github.event.inputs.bump_type }}"
+            echo "Prepending 'pre' to bump type for non-production release."
+          fi
+          echo "Bump type: $BUMP_TYPE"
+
+          # Bump version according to input
+          NEW_VERSION=$(semver --increment $BUMP_TYPE $CURRENT_VERSION)
+          echo "New version: $NEW_VERSION"
+
+          # Write new version to version.txt
+          echo $NEW_VERSION > version.txt
+
+          # Set outputs for later steps
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+          # Commit the version bump
+          git add version.txt
+          git commit -m "Bump version to $NEW_VERSION [skip ci]"
+
+      - name: Push changes
+        run: |
+          git push origin
+          git tag -a v${{ steps.bump_version.outputs.new_version }} -m "Version ${{ steps.bump_version.outputs.new_version }}"
+          git push origin --tags
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.bump_version.outputs.new_version }}
+          name: Release v${{ steps.bump_version.outputs.new_version }}
+          draft: false
+          prerelease: ${{ !github.event.inputs.production_ready }}
+          generate_release_notes: true
+
+      - name: Wait for Docker workflow
+        id: wait_for_docker
+        run: |
+          # Set max wait time in seconds (e.g., 2.5 hours)
+          MAX_WAIT=9000
+          WAIT_INTERVAL=30
+          ELAPSED=0
+          
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            # Check if docker workflow completed for this tag
+            WORKFLOW_STATUS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/repos/${{ github.repository }}/actions/workflows/docker.yml/runs?status=completed&event=push&branch=refs/tags/v${{ steps.bump_version.outputs.new_version }}" | jq -r '.workflow_runs[0].conclusion')
+            
+            if [ "$WORKFLOW_STATUS" = "success" ]; then
+              echo "Docker workflow completed successfully"
+              break
+            elif [ "$WORKFLOW_STATUS" = "failure" ]; then
+              echo "Docker workflow failed"
+              exit 1
+            fi
+            
+            echo "Waiting for Docker workflow to complete... ($ELAPSED seconds elapsed)"
+            sleep $WAIT_INTERVAL
+            ELAPSED=$((ELAPSED + WAIT_INTERVAL))
+          done
+
+      - name: Update Release with Docker info
+        if: steps.wait_for_docker.outcome == 'success'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.bump_version.outputs.new_version }}
+          draft: false
+          append_body: true
+          body: |
+            ## Docker Images
+            
+            The following Docker images are available:
+            
+            ```bash
+            # Pull the specific version
+            docker pull ghcr.io/kjanat/pdf-extract-with-ocr:v${{ steps.bump_version.outputs.new_version }}
+            
+            # Pull the latest version
+            docker pull ghcr.io/kjanat/pdf-extract-with-ocr:latest
+            ```
+            
+            ### Docker Compose
+            ```yaml
+            services:
+              pdf-extract:
+                image: ghcr.io/kjanat/pdf-extract-with-ocr:v${{ steps.bump_version.outputs.new_version }}
+                ports:
+                  - "8080:80"
+                volumes:
+                  - ./uploads:/app/uploads
+                environment:
+                  - DATABASE_URL=sqlite:///local.db
+            ```

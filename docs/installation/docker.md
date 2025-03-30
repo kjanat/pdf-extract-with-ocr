@@ -112,4 +112,4 @@ If you encounter issues:
 3. Ensure port `8080` is not already in use on your host
 4. Check if volumes have correct permissions
 
-For more information, refer to the [GitHub repository](https://github.com/kjanat/pdf-extract-with-ocr).
+For more information, refer to the [GitHub repository][Repository].
