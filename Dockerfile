@@ -37,7 +37,9 @@ COPY requirements.txt .
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    IS_DOCKER_CONTAINER=true \
+    PIP_ROOT_USER_ACTION=ignore
 
 # Install runtime dependencies with better locking
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -49,8 +51,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install Python dependencies with cache
 COPY --from=builder /wheels /wheels
-RUN pip install --root-user-action --upgrade pip \
-    && pip install --root-user-action --no-index --find-links=/wheels -r requirements.txt \
+RUN pip install --upgrade pip \
+    && pip install --no-index --find-links=/wheels -r requirements.txt \
     && rm -rf /wheels
 
 # Copy application code last to maximize cache usage for previous layers
