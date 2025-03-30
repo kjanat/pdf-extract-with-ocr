@@ -1,0 +1,16 @@
+:root>* {
+	/* --md-code-hl-color: #2977ff; */
+	/* --md-code-hl-color--light: #2977ff1a; */
+	/* --md-code-hl-number-color: #e6695b; */
+	/* --md-code-hl-special-color: #f06090; */
+	/* --md-code-hl-function-color: #c973d9; */
+	/* --md-code-hl-constant-color: #9383e2; */
+	/* --md-code-hl-keyword-color: #6791e0; */
+	/* --md-code-hl-string-color: #2fb170; */
+    --md-code-hl-name-color: #f0a500;
+    --md-code-hl-operator-color: #5a9eff;
+    --md-code-hl-punctuation-color: #939393;
+    --md-code-hl-comment-color: #7d8799;
+    --md-code-hl-generic-color: #8e8e8e;
+    --md-code-hl-variable-color: #4eaaaf;
+}

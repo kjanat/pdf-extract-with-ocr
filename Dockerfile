@@ -8,15 +8,19 @@ WORKDIR /wheels
 # Copy requirements first to leverage cache
 COPY requirements.txt .
 
-# Install build dependencies with better cache handling
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    libffi-dev \
-    pkg-config \
-    gcc \
-    python3-dev \
-    libpq-dev \
-    swig \
+# Install build dependencies with better cache handling if armv7l
+RUN apt-get update \
+  && if [ "$(uname -m)" = "armv7l" ]; then \
+    echo "Installing ARM-specific build dependencies" && \
+    apt-get install -y --no-install-recommends \
+      build-essential \
+      libffi-dev \
+      pkg-config \
+      gcc \
+      python3-dev \
+      libpq-dev \
+      swig; \
+    fi \
     && rm -rf /var/lib/apt/lists/*
 
 # Build wheels with pip cache
@@ -46,8 +50,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tesseract-ocr \
     tesseract-ocr-nld \
     libpq5 \
-    && rm -rf /var/lib/apt/lists/* \
-    && mkdir -p /app/uploads
+    redis-server \
+    sqlite3 \
+  && rm -rf /var/lib/apt/lists/* \
+  && mkdir -p /app/uploads
 
 # Install Python dependencies with cache
 COPY --from=builder /wheels /wheels

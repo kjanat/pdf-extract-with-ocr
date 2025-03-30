@@ -168,4 +168,4 @@ The API may return the following error responses:
 - Processing time varies based on PDF size, complexity, and whether OCR is needed
 - Large PDFs may take longer to process, especially when OCR is required
 
-For frontend integration examples, see the JavaScript in the [`script.js`](https://github.com/kjanat/pdf-extract-with-ocr/blob/docker/static/script.js) file.
+For frontend integration examples, see the JavaScript in the [`script.js`][script.js] file.

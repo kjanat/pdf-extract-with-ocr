@@ -185,6 +185,7 @@ tessdata/
 # Build cache for dockerx
 .docker-cache/
 docker-image.yml
+docker-bake.hcl
 
 # Backup files
 *.bak
