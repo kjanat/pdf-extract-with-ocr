@@ -55,7 +55,7 @@ The API service exposes the Flask web server that provides the REST API and web 
 
 ```yaml
 api:
-  image: kjanat/pdf-extract-with-ocr:api-latest
+  image: kjanat/pdf-extract-with-ocr:latest
   container_name: pdf-extract-api
   ports:
     - "${API_PORT:-8080}:80"
@@ -72,7 +72,7 @@ The worker service processes PDF files asynchronously using Celery. It performs 
 
 ```yaml
 worker:
-  image: kjanat/pdf-extract-with-ocr:worker-latest
+  image: kjanat/pdf-extract-with-ocr:latest
   container_name: pdf-extract-celery-worker
   env_file:
     - .env

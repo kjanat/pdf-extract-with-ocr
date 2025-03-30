@@ -184,6 +184,7 @@ tessdata/
 
 # Build cache for dockerx
 .docker-cache/
+docker-image.yml
 
 # Backup files
 *.bak
@@ -197,7 +198,5 @@ local.db
 # Temporary files
 temp/
 uploads/
-
-requirements-mkdocs.txt
 
 overrides/.icons/bootstrap/

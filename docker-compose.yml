@@ -6,10 +6,12 @@ x-healthcheck: &default-healthcheck
 
 services:
   api:
-    image: kjanat/pdf-extract-with-ocr:api-latest
+    image: kjanat/pdf-extract-with-ocr:latest
     container_name: pdf-extract-api
     ports:
       - "${API_PORT:-8080}:80"
+    environment:
+      - IS_DOCKER_CONTAINER=true
     env_file:
       - .env
     volumes:
@@ -23,8 +25,10 @@ services:
       - app-network
 
   worker:
-    image: kjanat/pdf-extract-with-ocr:worker-latest
+    image: kjanat/pdf-extract-with-ocr:latest
     container_name: pdf-extract-celery-worker
+    environment:
+      - IS_DOCKER_CONTAINER=true
     env_file:
       - .env
     volumes:
