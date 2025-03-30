@@ -6,14 +6,20 @@ __pycache__/
 temp/
 .env
 .env.dev
+.env.example
 
 .vscode/
+.github/
+.cache/
 tessdata/
 venv/
 temp/
 uploads/
 docs/
 overrides/
+scripts/
+docs/
+site/
 
 README.md
 mkdocs.yml
@@ -22,4 +28,4 @@ mkdocs.yml
 *.ps1
 
 local.db
-requirements-mkdocs.txt
+mkdocs.yml

@@ -36,7 +36,7 @@ Create a `.env` file in the same directory as your `docker-compose.yml` with the
 
 ## Services Overview
 
-The [`docker-compose.yml`](#docker-composeyml) file defines four services:
+The [`docker-compose.yml`](#docker-compose-yml) file defines four services:
 
 ### API Service
 
@@ -155,13 +155,13 @@ For more information about the application, refer to the [GitHub repository][Rep
 
 ## Reference files
 
-### [`docker-compose.yml`][docker-compose.yml]
+### [`docker-compose.yml`][docker-compose.yml] {#docker-compose-yml}
 
 ``` yaml title="docker-compose.yml"
 --8<-- "docker-compose.yml"
 ```
 
-### [`.env`][.env.example]
+### [`.env`][.env.example] {#env}
 
 ``` yaml title=".env.example"
 --8<-- ".env.example"

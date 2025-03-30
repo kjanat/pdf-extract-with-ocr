@@ -75,7 +75,7 @@ Install the required system dependencies based on your operating system:
         python -m venv venv
 
         # Activate on Windows
-        .\venv\Scripts\Activate.ps1
+        .\venv\Scripts\Activate
         ```
 
     === ":fontawesome-brands-apple: macOS"
