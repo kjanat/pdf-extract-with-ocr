@@ -8,6 +8,7 @@ on:
     tags: ["v*.*.*"]
   pull_request:
     branches: ["master", "docker"]
+  workflow_dispatch:
 
 jobs:
   build-fast-platforms:
@@ -95,8 +96,8 @@ jobs:
   build-armv7:
     name: Build armv7 image
     runs-on: ubuntu-latest
-    # Only build armv7 for tags and scheduled builds, not every PR or push
-    if: github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/')
+    # Only build armv7 for tags and scheduled builds, or on workflow dispatch, not every PR or push
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/')
     permissions:
       contents: read
       packages: write
