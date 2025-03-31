@@ -2,6 +2,7 @@ site_name: PDF Extract with OCR
 site_url: https://pdf-extract.kjanat.com/ 
 site_description: Documentatie van Kaj op het gebied van geneeskunde, psychiatrie en web development.
 site_author: kjanat
+site_dir: docs
 copyright: Copyright &copy; Kaj
 repo_url: https://github.com/kjanat/pdf-extract-with-ocr
 repo_name: kjanat/pdf-extract-with-ocr
