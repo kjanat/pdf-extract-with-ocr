@@ -4,17 +4,17 @@ on:
     branches: ["master", "docker"]
   pull_request:
     branches: ["master", "docker"]
-
-    # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 permissions:
   contents: write
-  id-token: write   # to verify the deployment originates from an appropriate source
+  pages: write
+  id-token: write
 
 jobs:
   build:
-    name: Deploy to GitHub Pages
+    name: Build and Deploy MkDocs
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
@@ -70,6 +70,8 @@ jobs:
 
   # Deployment job
   deploy:
+    name: Deploy to GitHub Pages
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
