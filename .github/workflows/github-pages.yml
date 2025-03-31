@@ -44,6 +44,7 @@ jobs:
       - name: Install MkDocs and plugins
         run: python3 -m pip install --upgrade --requirement ./docs/mkdocs-requirements.txt
       - name: Build documentation
+        id: build
         run: mkdocs build --verbose --site-dir public  # run: mkdocs gh-deploy --force
       # - name: Deploy to GitHub Pages
       #   uses: peaceiris/actions-gh-pages@v4
