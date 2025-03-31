@@ -3,16 +3,16 @@ name: Auto Versioning and Release
 on:
   workflow_dispatch:
     inputs:
-      bump_type:
-        description: 'Version bump type (patch, minor, major, prerelease)'
+      bumpType:
+        description: 'Version bump type (patch, minor, major)'
         required: true
         default: 'patch'
         type: choice
         options:
-          - patch
-          - minor
-          - major
-      production_ready:
+        - patch
+        - minor
+        - major
+      productionReady:
         description: 'Is this a production-ready?'
         required: true
         default: false
@@ -46,11 +46,11 @@ jobs:
           CURRENT_VERSION=$(cat version.txt || echo "0.1.0")
           echo "Current version: $CURRENT_VERSION"
 
-          # If not production ready, prepend "pre" to the ${{ github.event.inputs.bump_type }}
-          if ${{ github.event.inputs.production_ready }}; then
-            BUMP_TYPE="${{ github.event.inputs.bump_type }}"
+          # If not production ready, prepend "pre" to the ${{ github.event.inputs.bumpType }}
+          if ${{ github.event.inputs.productionReady }}; then
+            BUMP_TYPE="${{ github.event.inputs.bumpType }}"
           else
-            BUMP_TYPE="pre${{ github.event.inputs.bump_type }}"
+            BUMP_TYPE="pre${{ github.event.inputs.bumpType }}"
             echo "Prepending 'pre' to bump type for non-production release."
           fi
           echo "Bump type: $BUMP_TYPE"
@@ -81,7 +81,7 @@ jobs:
           tag_name: v${{ steps.bump_version.outputs.new_version }}
           name: Release v${{ steps.bump_version.outputs.new_version }}
           draft: false
-          prerelease: ${{ !github.event.inputs.production_ready }}
+          prerelease: ${{ !github.event.inputs.productionReady }}
           generate_release_notes: true
 
       - name: Wait for Docker workflow
