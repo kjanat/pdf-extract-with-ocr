@@ -75,14 +75,22 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          annotations: ${{ steps.meta.outputs.annotations }}
 
       # Sign the images (GitHub Container Registry only)
       - name: Sign the published Docker image
         if: ${{ github.event_name != 'pull_request' }}
         env:
-          TAGS: ghcr.io/${{ github.repository }}:${{ steps.meta.outputs.version }}
+          # Use a more explicit approach to ensure only ghcr.io images are signed
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
-        run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+        run: |
+          # Get all tags produced by the metadata action
+          ALL_TAGS="${{ steps.meta.outputs.tags }}"
+          # Filter for only ghcr.io tags
+          GHCR_TAGS=$(echo "$ALL_TAGS" | grep "^ghcr.io/")
+          echo "$GHCR_TAGS"
+          # Sign only the GitHub Container Registry images
+          echo "$GHCR_TAGS" | xargs -I {} cosign sign --yes {}@${DIGEST}
 
   build-armv7:
     name: Build armv7 image
@@ -149,6 +157,11 @@ jobs:
       - name: Sign the published Docker image
         if: ${{ github.event_name != 'pull_request' }}
         env:
-          TAGS: ghcr.io/${{ github.repository }}:${{ steps.meta.outputs.version }}-armv7
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
-        run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+        run: |
+          # Get all tags produced by the metadata action
+          ALL_TAGS="${{ steps.meta.outputs.tags }}"
+          # Filter for only ghcr.io tags
+          GHCR_TAGS=$(echo "$ALL_TAGS" | grep "^ghcr.io/")
+          # Sign only the GitHub Container Registry images
+          echo "$GHCR_TAGS" | xargs -I {} cosign sign --yes {}@${DIGEST}
