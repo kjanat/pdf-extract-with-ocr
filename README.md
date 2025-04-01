@@ -9,10 +9,13 @@
 
 <div align="center" style="padding: 2vh 10vw 1vh 10vw; display: flex; flex-basis: auto; flex-wrap: wrap; flex-shrink: 1; flex-flow: row wrap; float: inline-flex; justify-content: space-around; justify-items: center;">
 
-[![Commits](https://img.shields.io/github/commit-activity/m/kjanat/pdf-extract-with-ocr?label=commits&style=for-the-badge)][GitHub Commits]
-[![GitHub last commit](https://img.shields.io/github/last-commit/kjanat/pdf-extract-with-ocr?style=for-the-badge&display_timestamp=committer)][GitHub Monthly]
-[![Docker Pulls](https://img.shields.io/docker/pulls/kjanat/pdf-extract-with-ocr?style=for-the-badge)][Docker]
+[![Commits](https://img.shields.io/github/commit-activity/m/kjanat/pdf-extract-with-ocr/docker?style=for-the-badge)][GitHub Commits]
+[![GitHub last commit](https://img.shields.io/github/last-commit/kjanat/pdf-extract-with-ocr/docker?style=for-the-badge&label=Last%20commit%20(branch))][GitHub Monthly]
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kjanat/pdf-extract-with-ocr/docker.yml?style=for-the-badge)][Build Status]
+[![Docker Pulls](https://img.shields.io/docker/pulls/kjanat/pdf-extract-with-ocr?style=for-the-badge)][Docker]
+[![Docker Image Size](https://img.shields.io/docker/image-size/kjanat/pdf-extract-with-ocr?style=for-the-badge&sort=date)][Docker]
+[![Docker Image Version](https://img.shields.io/docker/v/kjanat/pdf-extract-with-ocr?style=for-the-badge&label=Version&sort=date)][Docker]
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fpdf-extract-with-ocr.kjanat.com%2F&up_message=Live&down_message=Down&style=for-the-badge&logo=materialformkdocs&logoColor=white&label=Documentation)][Documentation]
 
 </div>
 
@@ -189,3 +192,4 @@ This software and associated documentation files are proprietary. Private use is
 [GitHub Monthly]: https://github.com/kjanat/pdf-extract-with-ocr/pulse/monthly
 [Docker]: https://hub.docker.com/r/kjanat/pdf-extract-with-ocr
 [Build Status]: https://github.com/kjanat/pdf-extract-with-ocr/actions/workflows/docker.yml
+[Documentation]: https://pdf-extract-with-ocr.kjanat.com/

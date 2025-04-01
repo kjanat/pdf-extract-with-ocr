@@ -199,5 +199,3 @@ temp/
 uploads/
 
 overrides/.icons/bootstrap/
-
-.github/workflows/mkdocs.yml
