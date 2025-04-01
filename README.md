@@ -9,8 +9,8 @@
 
 <div align="center" style="padding: 2vh 10vw 1vh 10vw; display: flex; flex-basis: auto; flex-wrap: wrap; flex-shrink: 1; flex-flow: row wrap; float: inline-flex; justify-content: space-around; justify-items: center;">
 
-[![Commits](https://img.shields.io/github/commit-activity/m/kjanat/pdf-extract-with-ocr/docker?style=for-the-badge)][GitHub Commits]
-[![GitHub last commit](https://img.shields.io/github/last-commit/kjanat/pdf-extract-with-ocr/docker?style=for-the-badge&label=Last%20commit%20(branch))][GitHub Monthly]
+[![Commits](https://img.shields.io/github/commit-activity/m/kjanat/pdf-extract-with-ocr/master?style=for-the-badge)][GitHub Commits]
+[![GitHub last commit](https://img.shields.io/github/last-commit/kjanat/pdf-extract-with-ocr/master?style=for-the-badge&label=Last%20commit)][GitHub Monthly]
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kjanat/pdf-extract-with-ocr/docker.yml?style=for-the-badge)][Build Status]
 [![Docker Pulls](https://img.shields.io/docker/pulls/kjanat/pdf-extract-with-ocr?style=for-the-badge)][Docker]
 [![Docker Image Size](https://img.shields.io/docker/image-size/kjanat/pdf-extract-with-ocr?style=for-the-badge&sort=date)][Docker]
@@ -19,11 +19,12 @@
 
 </div>
 
-This project is a Flask-based web application that extracts text from PDF files. It determines whether the PDF contains selectable text or is a scanned document, using PyMuPDF for direct text extraction and Tesseract OCR for scanned images.
+This project is a Flask-based web application that extracts text from PDF files. It determines whether the PDF contains selectable text or is a scanned document, using [`PyMuPDF`][pymupdf] for direct text extraction and [`Tesseract OCR`][tesseract] for scanned images.
+
 ## Features
 
-- Extracts text from PDFs with selectable text using
-- Detects scanned PDFs and applies OCR with
+- Extracts text from PDFs with selectable text using [`pymupdf`][pymupdf] 
+ - Detects scanned PDFs and applies OCR with [`tesseract`][tesseract] 
 - Automatic Tesseract installation check and language data download
 - Returns extracted text in a structured JSON format
 - Provides processing time and extraction method details
