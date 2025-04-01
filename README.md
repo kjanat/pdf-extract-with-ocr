@@ -193,3 +193,5 @@ This software and associated documentation files are proprietary. Private use is
 [Docker]: https://hub.docker.com/r/kjanat/pdf-extract-with-ocr
 [Build Status]: https://github.com/kjanat/pdf-extract-with-ocr/actions/workflows/docker.yml
 [Documentation]: https://pdf-extract-with-ocr.kjanat.com/
+[tesseract]: https://github.com/tesseract-ocr/tesseract
+[pymupdf]: https://github.com/pymupdf/PyMuPDF
