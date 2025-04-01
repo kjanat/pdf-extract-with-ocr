@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 from werkzeug.wrappers import Response
+from werkzeug.utils import secure_filename
 from db import init_db, SessionLocal, OCRJob
 from typing import Optional
 from utils import check_stalled_jobs
@@ -37,7 +38,8 @@ def upload_pdf():
     if not file.filename:
         return jsonify({"error": "No selected file"}), 400
 
-    unique_filename = f"{uuid.uuid4()}.{file.filename.split('.')[-1]}"
+    sanitized_filename = secure_filename(file.filename)
+    unique_filename = f"{uuid.uuid4()}.{sanitized_filename.split('.')[-1]}"
     temp_path = os.path.join("uploads", unique_filename)
     os.makedirs("uploads", exist_ok=True)
     file.save(temp_path)
