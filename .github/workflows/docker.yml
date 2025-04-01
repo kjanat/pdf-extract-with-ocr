@@ -71,7 +71,7 @@ jobs:
           annotations: |
             org.opencontainers.image.description:${REPO_DESCRIPTION}
             org.opencontainers.image.vendor=${{ github.event.repository.owner.login }}
-            org.opencontainers.image.licenses="Proprietary"
+            org.opencontainers.image.licenses=Proprietary
 
       # Build and push common platforms
       - name: Build and push fast platforms
