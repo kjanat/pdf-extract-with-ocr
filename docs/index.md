@@ -215,6 +215,6 @@ The application maintains a history of processing jobs, which you can view at ht
 
 © 2025 Kaj Kowalski. All Rights Reserved.
 
-This software and associated documentation files are proprietary. Private use is permitted without restrictions. For commercial use, distribution, or modification, prior written approval from the owner is required.
+Licensed under MIT License, see [LICENSE](https://github.com/kjanat/pdf-extract-with-ocr/blob/master/LICENSE)
 
 [API]: api/endpoints.md "API Documentation"
