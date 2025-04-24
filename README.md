@@ -16,6 +16,7 @@
 [![Docker Image Size](https://img.shields.io/docker/image-size/kjanat/pdf-extract-with-ocr?style=for-the-badge&sort=date)][Docker]
 [![Docker Image Version](https://img.shields.io/docker/v/kjanat/pdf-extract-with-ocr?style=for-the-badge&label=Version&sort=date)][Docker]
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fpdf-extract-with-ocr.kjanat.com%2F&up_message=Live&down_message=Down&style=for-the-badge&logo=materialformkdocs&logoColor=white&label=Documentation)][Documentation]
+![GitHub License](https://img.shields.io/github/license/kjanat/pdf-extract-with-ocr?style=for-the-badge&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjEgMTY2IiBzaGFwZS1yZW5kZXJpbmc9ImNyaXNwRWRnZXMiIGZpbGw9IiNmZmYiPjxwYXRoIGQ9Ik0wIDBoMzV2MTY2SDB6bTU3IDBoMzV2MTEzSDU3em01NyAwaDM1djE2NmgtMzV6bTU3IDBoMzV2MzNoLTM1em01OCA1M2gzNXYxMTNoLTM1em0wLTUzaDkydjMzaC05MnpNMTcxIDUzaDM1djExM2gtMzV6Ii8%2BPC9zdmc%2B)
 
 </div>
 
@@ -182,9 +183,7 @@ Docker will automatically pull the correct image for your system architecture.
 
 ## License
 
-© 2025 Kaj Kowalski. All Rights Reserved.
-
-This software and associated documentation files are proprietary. Private use is permitted without restrictions. For commercial use, distribution, or modification, prior written approval from the owner is required.
+Licensed under MIT License, see [LICENSE](LICENSE)
 
 <!-- [GitHub License]: #license "Not licensed" -->
 
