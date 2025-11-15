@@ -51,8 +51,8 @@ def upload_pdf():
         try:
             file.save(temp_path)
         except Exception as e:
-            app.logger.error(f"Failed to save file: {e}")
-            return jsonify({"error": f"Failed to save file: {str(e)}"}), 500
+            app.logger.error(f"Failed to save file: {e}", exc_info=True)
+            return jsonify({"error": "Failed to save file. Please try again."}), 500
 
         task = process_pdf_task.delay(temp_path)
 
@@ -72,8 +72,8 @@ def upload_pdf():
             "filename": file.filename
         })
     except Exception as e:
-        app.logger.error(f"Error in upload endpoint: {e}")
-        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+        app.logger.error(f"Error in upload endpoint: {e}", exc_info=True)
+        return jsonify({"error": "An error occurred while processing your upload. Please try again."}), 500
 
 @app.route('/api/jobs', methods=['GET'])
 def get_jobs():
