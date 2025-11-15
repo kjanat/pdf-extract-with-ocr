@@ -60,6 +60,10 @@ def create_app(config: Optional[dict] = None) -> Flask:
     # Store limiter in app extensions
     app.extensions['limiter'] = limiter
 
+    # Initialize API documentation
+    from api_docs import api
+    api.init_app(app)
+
     # Register blueprints
     from routes import api_bp, pages_bp
     app.register_blueprint(api_bp)

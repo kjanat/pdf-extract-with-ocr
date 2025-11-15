@@ -9,9 +9,12 @@ from datetime import datetime, timezone
 from flask import Blueprint, request, jsonify, send_from_directory, current_app
 from werkzeug.utils import secure_filename
 from typing import Optional
+from io import BytesIO
 
 from db import SessionLocal, OCRJob
 from tasks import process_pdf_task
+from middleware import require_api_key, optional_api_key
+from storage import storage
 
 # Create blueprints
 api_bp = Blueprint('api', __name__, url_prefix='/api')
@@ -84,12 +87,16 @@ def readiness_check():
 # ============================================================================
 
 @pages_bp.route('/upload', methods=['POST'])
+@optional_api_key
 def upload_pdf():
     """
     Upload and process a PDF file.
 
     Rate limited to 10 uploads per minute.
     Maximum file size: 50MB (configured in factory.py)
+
+    Note: Currently saves to local filesystem for processing.
+    TODO: Integrate with storage backend for S3/MinIO support.
     """
     # Get limiter from app extensions
     limiter = current_app.extensions.get('limiter')
@@ -161,6 +168,7 @@ def upload_pdf():
 # ============================================================================
 
 @api_bp.route('/jobs', methods=['GET'])
+@optional_api_key
 def get_jobs():
     """
     Get a list of recent OCR jobs.
@@ -187,6 +195,7 @@ def get_jobs():
 
 
 @api_bp.route('/result/<task_id>', methods=['GET'])
+@optional_api_key
 def get_result(task_id: str):
     """
     Get the result of a completed OCR job.
@@ -221,6 +230,7 @@ def get_result(task_id: str):
 
 
 @api_bp.route('/status/<task_id>', methods=['GET'])
+@optional_api_key
 def check_status(task_id: str):
     """
     Check the status of an OCR job.
