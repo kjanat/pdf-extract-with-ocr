@@ -20,6 +20,10 @@ updates:
     commit-message:
       prefix: "fix"
       include: "scope" # Include the scope in the commit message
+    groups:
+      pip-dependencies:
+        patterns:
+          - "*"
 
   # Enable version updates for Docker
   - package-ecosystem: "docker"
@@ -30,6 +34,10 @@ updates:
       day: "tuesday"
       time: "03:00"
       timezone: "Europe/Amsterdam"
+    groups:
+      docker-dependencies:
+        patterns:
+          - "*"
 
   - package-ecosystem: "docker-compose"
     directory: "/"
@@ -38,6 +46,10 @@ updates:
       day: "tuesday"
       time: "03:00"
       timezone: "Europe/Amsterdam"
+    groups:
+      docker-compose-dependencies:
+        patterns:
+          - "*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -46,3 +58,7 @@ updates:
       day: "tuesday"
       time: "03:00"
       timezone: "Europe/Amsterdam"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
