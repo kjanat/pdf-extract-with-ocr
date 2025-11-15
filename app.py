@@ -30,37 +30,50 @@ def jobs_view():
 
 @app.route('/upload', methods=['POST'])
 def upload_pdf():
-    app.logger.info("Received a file upload request")
-    if 'file' not in request.files:
-        return jsonify({"error": "No file uploaded"}), 400
+    try:
+        app.logger.info("Received a file upload request")
+        if 'file' not in request.files:
+            return jsonify({"error": "No file uploaded"}), 400
 
-    file = request.files['file']
-    if not file.filename:
-        return jsonify({"error": "No selected file"}), 400
+        file = request.files['file']
+        if not file.filename:
+            return jsonify({"error": "No selected file"}), 400
 
-    sanitized_filename = secure_filename(file.filename)
-    unique_filename = f"{uuid.uuid4()}.{sanitized_filename.split('.')[-1]}"
-    temp_path = os.path.join("uploads", unique_filename)
-    os.makedirs("uploads", exist_ok=True)
-    file.save(temp_path)
+        # Validate file extension
+        if not file.filename.lower().endswith('.pdf'):
+            return jsonify({"error": "Only PDF files are allowed"}), 400
 
-    task = process_pdf_task.delay(temp_path)
+        sanitized_filename = secure_filename(file.filename)
+        unique_filename = f"{uuid.uuid4()}.{sanitized_filename.split('.')[-1]}"
+        temp_path = os.path.join("uploads", unique_filename)
+        os.makedirs("uploads", exist_ok=True)
 
-    with SessionLocal() as session:
-        job = OCRJob(
-            id=task.id, 
-            filename=file.filename, 
-            status="PENDING", 
-            created_at=datetime.now(timezone.utc)
-        )
-        session.add(job)
-        session.commit()
+        try:
+            file.save(temp_path)
+        except Exception as e:
+            app.logger.error(f"Failed to save file: {e}")
+            return jsonify({"error": f"Failed to save file: {str(e)}"}), 500
 
-    return jsonify({
-        "status": "processing",
-        "task_id": task.id,
-        "filename": file.filename
-    })
+        task = process_pdf_task.delay(temp_path)
+
+        with SessionLocal() as session:
+            job = OCRJob(
+                id=task.id,
+                filename=file.filename,
+                status="PENDING",
+                created_at=datetime.now(timezone.utc)
+            )
+            session.add(job)
+            session.commit()
+
+        return jsonify({
+            "status": "processing",
+            "task_id": task.id,
+            "filename": file.filename
+        })
+    except Exception as e:
+        app.logger.error(f"Error in upload endpoint: {e}")
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
 @app.route('/api/jobs', methods=['GET'])
 def get_jobs():
@@ -95,7 +108,7 @@ def get_result(task_id: str) -> Response:
     # session.close()
 
     if not job:
-        response = jsonify({"error": "Job not found"})
+        response = jsonify({"error": "Job not found", "state": "FAILED"})
         response.status_code = 404
         return response
 
@@ -123,7 +136,7 @@ def check_status(task_id: str) -> Response:
     # session.close()
 
     if not job:
-        response = jsonify({"error": "Job not found"})
+        response = jsonify({"error": "Job not found", "state": "FAILED"})
         response.status_code = 404
         return response
 
@@ -132,7 +145,8 @@ def check_status(task_id: str) -> Response:
         "method": job.method,
         "text": job.result_text,
         "duration_ms": job.duration_ms,
-        "created_at": job.created_at.isoformat()
+        "created_at": job.created_at.isoformat(),
+        "error_message": job.error_message
     })
 
 if __name__ == '__main__':
