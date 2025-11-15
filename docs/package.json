@@ -1,0 +1,21 @@
+{
+  "name": "pdf-extract-with-ocr-docs",
+  "version": "1.0.0",
+  "description": "Documentation JavaScript type checking for PDF Extract with OCR",
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc --project jsconfig.json --noEmit",
+    "typecheck:watch": "tsc --project jsconfig.json --noEmit --watch",
+    "lint": "eslint javascripts/**/*.js",
+    "format": "prettier --check javascripts/**/*.js",
+    "format:write": "prettier --write javascripts/**/*.js"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "kjanat",
+  "license": "SEE LICENSE IN ../LICENSE"
+}
