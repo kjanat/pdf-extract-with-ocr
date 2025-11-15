@@ -1,180 +1,29 @@
+"""
+PDF Extract with OCR - Main Application
+
+This is the main entry point for the Flask application using the factory pattern.
+"""
 import os
-import uuid
-from datetime import datetime, timezone
-from flask import Flask, request, jsonify, Response
-from flask_cors import CORS
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
-from werkzeug.wrappers import Response
-from werkzeug.utils import secure_filename
-from db import init_db, SessionLocal, OCRJob
-from typing import Optional
+from factory import create_app
 from utils import check_stalled_jobs
-from settings import IS_DOCKER
-from tasks import process_pdf_task
 
-app = Flask(__name__)
+# Create the application instance
+app = create_app()
 
-# Configure CORS - restrict to specific origins in production
-# For development, you can use CORS(app) or set specific origins
-ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*").split(",")
-CORS(app, origins=ALLOWED_ORIGINS if ALLOWED_ORIGINS != ["*"] else "*")
-
-# Configure rate limiting
-limiter = Limiter(
-    app=app,
-    key_func=get_remote_address,
-    default_limits=["200 per day", "50 per hour"],
-    storage_uri="memory://"  # Use Redis in production: redis://localhost:6379
-)
-
-# Maximum file size: 50MB
-MAX_FILE_SIZE = 50 * 1024 * 1024
-
-if IS_DOCKER:
-    app.logger.setLevel("WARNING")
-else:
-    app.logger.setLevel("INFO")
-    app.logger.info("Running in local development mode")
-
-@app.route('/')
-def index() -> Response:
-    return app.send_static_file('index.html')
-
-@app.route('/jobs')
-def jobs_view():
-    return app.send_static_file('jobs.html')
-
-@app.route('/upload', methods=['POST'])
-@limiter.limit("10 per minute")
-def upload_pdf():
-    try:
-        app.logger.info("Received a file upload request")
-        if 'file' not in request.files:
-            return jsonify({"error": "No file uploaded"}), 400
-
-        file = request.files['file']
-        if not file.filename:
-            return jsonify({"error": "No selected file"}), 400
-
-        # Validate file extension
-        if not file.filename.lower().endswith('.pdf'):
-            return jsonify({"error": "Only PDF files are allowed"}), 400
-
-        # Validate file size
-        file.seek(0, os.SEEK_END)
-        file_size = file.tell()
-        file.seek(0)  # Reset file pointer
-
-        if file_size > MAX_FILE_SIZE:
-            return jsonify({"error": f"File too large. Maximum size is {MAX_FILE_SIZE // (1024 * 1024)}MB"}), 413
-
-        if file_size == 0:
-            return jsonify({"error": "File is empty"}), 400
-
-        sanitized_filename = secure_filename(file.filename)
-        unique_filename = f"{uuid.uuid4()}.{sanitized_filename.split('.')[-1]}"
-        temp_path = os.path.join("uploads", unique_filename)
-        os.makedirs("uploads", exist_ok=True)
-
-        try:
-            file.save(temp_path)
-        except Exception as e:
-            app.logger.error(f"Failed to save file: {e}", exc_info=True)
-            return jsonify({"error": "Failed to save file. Please try again."}), 500
-
-        task = process_pdf_task.delay(temp_path)
-
-        with SessionLocal() as session:
-            job = OCRJob(
-                id=task.id,
-                filename=file.filename,
-                status="PENDING",
-                created_at=datetime.now(timezone.utc)
-            )
-            session.add(job)
-            session.commit()
-
-        return jsonify({
-            "status": "processing",
-            "task_id": task.id,
-            "filename": file.filename
-        })
-    except Exception as e:
-        app.logger.error(f"Error in upload endpoint: {e}", exc_info=True)
-        return jsonify({"error": "An error occurred while processing your upload. Please try again."}), 500
-
-@app.route('/api/jobs', methods=['GET'])
-def get_jobs():
-    with SessionLocal() as session:
-        jobs = session.query(OCRJob).order_by(OCRJob.created_at.desc()).limit(20).all()
-
-    return jsonify([
-        {
-            "id": job.id,
-            "filename": job.filename,
-            "status": job.status,
-            "method": job.method,
-            "duration_ms": job.duration_ms,
-            "created_at": job.created_at.isoformat(),
-            "page_count": job.page_count,
-            "file_size_kb": job.file_size_kb,
-            "error_message": job.error_message
-        } for job in jobs
-    ])
-
-@app.route('/api/result/<task_id>', methods=['GET'])
-def get_result(task_id: str) -> Response:
-    with SessionLocal() as session:
-        job = session.query(OCRJob).filter(OCRJob.id == task_id).first()
-
-    if not job:
-        response = jsonify({"error": "Job not found", "state": "FAILED"})
-        response.status_code = 404
-        return response
-
-    # Return all details about the job, including the full text result
-    return jsonify({
-        "id": job.id,
-        "filename": job.filename,
-        "status": job.status,
-        "method": job.method,
-        "text": job.result_text,
-        "duration_ms": job.duration_ms,
-        "created_at": job.created_at.isoformat(),
-        "page_count": job.page_count,
-        "file_size_kb": job.file_size_kb,
-        "error_message": job.error_message
-    })
-
-@app.route('/status/<task_id>', methods=['GET'])
-def check_status(task_id: str) -> Response:
-    with SessionLocal() as session:
-        job: Optional[OCRJob] = session.query(OCRJob).filter(OCRJob.id == task_id).first()
-
-    if not job:
-        response = jsonify({"error": "Job not found", "state": "FAILED"})
-        response.status_code = 404
-        return response
-
-    return jsonify({
-        "state": job.status,
-        "method": job.method,
-        "text": job.result_text,
-        "duration_ms": job.duration_ms,
-        "created_at": job.created_at.isoformat(),
-        "error_message": job.error_message
-    })
+# Check for stalled jobs on startup
+with app.app_context():
+    check_stalled_jobs()
 
 if __name__ == '__main__':
-    init_db()
-    check_stalled_jobs()
     from waitress import serve
-    
+    from settings import IS_DOCKER
+
     if IS_DOCKER:
         host = os.getenv("FLASK_HOST", "0.0.0.0")
         port = int(os.getenv("FLASK_PORT", 80))
     else:
         host = os.getenv("FLASK_HOST", "127.0.0.1")
         port = int(os.getenv("FLASK_PORT", 8080))
+
+    app.logger.info(f"Starting server on {host}:{port}")
     serve(app, host=host, port=port)
