@@ -1,8 +1,11 @@
 import os
+import logging
 
 # Load local dev environment if present
 from dotenv import load_dotenv
-load_dotenv(".env.dev", override=True)
+load_dotenv(".env", override=False)
+
+logger = logging.getLogger(__name__)
 
 IS_DOCKER = os.getenv("IS_DOCKER_CONTAINER") == "true"
 
@@ -12,7 +15,11 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///local.db")
 # Default to memory broker (disables Redis & Celery async)
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "memory://")
 
-# Enable basic logging for debugging
-print(f"[config] IS_DOCKER = {IS_DOCKER}")
-print(f"[config] DATABASE_URL = {DATABASE_URL}")
-print(f"[config] CELERY_BROKER_URL = {CELERY_BROKER_URL}")
+# Celery result backend
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", CELERY_BROKER_URL)
+
+# Log configuration
+logger.info(f"Configuration loaded:")
+logger.info(f"  IS_DOCKER = {IS_DOCKER}")
+logger.info(f"  DATABASE_URL = {DATABASE_URL}")
+logger.info(f"  CELERY_BROKER_URL = {CELERY_BROKER_URL}")

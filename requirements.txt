@@ -1,31 +1,27 @@
 # Web framework
-Flask
-flask-cors
+Flask==3.0.3
+flask-cors==4.0.1
+Flask-Limiter==3.8.0
 
 # OCR & PDF processing
-pytesseract
-Pillow
-PyMuPDF
+pytesseract==0.3.13
+Pillow==10.4.0
+PyMuPDF==1.24.10
 
 # Database
-SQLAlchemy
-psycopg2-binary
+SQLAlchemy==2.0.35
+psycopg2-binary==2.9.9
+alembic==1.13.3
 
 # Environment variables
-python-dotenv
+python-dotenv==1.0.1
 
 # Background task queue
-celery
-celery-types
+celery==5.4.0
+celery-types==0.22.0
 
 # Redis
-redis
+redis==5.0.8
 
 # Production WSGI server
-waitress
-
-# For testing or formatting
-pytest
-black
-typing
-logging
+waitress==3.0.0

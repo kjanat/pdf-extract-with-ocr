@@ -3,6 +3,8 @@ import uuid
 from datetime import datetime, timezone
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from werkzeug.wrappers import Response
 from werkzeug.utils import secure_filename
 from db import init_db, SessionLocal, OCRJob
@@ -12,7 +14,22 @@ from settings import IS_DOCKER
 from tasks import process_pdf_task
 
 app = Flask(__name__)
-CORS(app)
+
+# Configure CORS - restrict to specific origins in production
+# For development, you can use CORS(app) or set specific origins
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*").split(",")
+CORS(app, origins=ALLOWED_ORIGINS if ALLOWED_ORIGINS != ["*"] else "*")
+
+# Configure rate limiting
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://"  # Use Redis in production: redis://localhost:6379
+)
+
+# Maximum file size: 50MB
+MAX_FILE_SIZE = 50 * 1024 * 1024
 
 if IS_DOCKER:
     app.logger.setLevel("WARNING")
@@ -29,6 +46,7 @@ def jobs_view():
     return app.send_static_file('jobs.html')
 
 @app.route('/upload', methods=['POST'])
+@limiter.limit("10 per minute")
 def upload_pdf():
     try:
         app.logger.info("Received a file upload request")
@@ -42,6 +60,17 @@ def upload_pdf():
         # Validate file extension
         if not file.filename.lower().endswith('.pdf'):
             return jsonify({"error": "Only PDF files are allowed"}), 400
+
+        # Validate file size
+        file.seek(0, os.SEEK_END)
+        file_size = file.tell()
+        file.seek(0)  # Reset file pointer
+
+        if file_size > MAX_FILE_SIZE:
+            return jsonify({"error": f"File too large. Maximum size is {MAX_FILE_SIZE // (1024 * 1024)}MB"}), 413
+
+        if file_size == 0:
+            return jsonify({"error": "File is empty"}), 400
 
         sanitized_filename = secure_filename(file.filename)
         unique_filename = f"{uuid.uuid4()}.{sanitized_filename.split('.')[-1]}"
@@ -77,10 +106,6 @@ def upload_pdf():
 
 @app.route('/api/jobs', methods=['GET'])
 def get_jobs():
-    # session = SessionLocal()
-    # jobs = session.query(OCRJob).order_by(OCRJob.created_at.desc()).limit(20).all()
-    # session.close()
-
     with SessionLocal() as session:
         jobs = session.query(OCRJob).order_by(OCRJob.created_at.desc()).limit(20).all()
 
@@ -102,10 +127,6 @@ def get_jobs():
 def get_result(task_id: str) -> Response:
     with SessionLocal() as session:
         job = session.query(OCRJob).filter(OCRJob.id == task_id).first()
-    
-    # session = SessionLocal()
-    # job = session.query(OCRJob).filter(OCRJob.id == task_id).first()
-    # session.close()
 
     if not job:
         response = jsonify({"error": "Job not found", "state": "FAILED"})
@@ -130,10 +151,6 @@ def get_result(task_id: str) -> Response:
 def check_status(task_id: str) -> Response:
     with SessionLocal() as session:
         job: Optional[OCRJob] = session.query(OCRJob).filter(OCRJob.id == task_id).first()
-    
-    # session = SessionLocal()
-    # job: Optional[OCRJob] = session.query(OCRJob).filter(OCRJob.id == task_id).first()
-    # session.close()
 
     if not job:
         response = jsonify({"error": "Job not found", "state": "FAILED"})
