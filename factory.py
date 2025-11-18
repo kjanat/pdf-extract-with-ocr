@@ -13,6 +13,8 @@ from typing import Optional
 
 from db import init_db
 from settings import IS_DOCKER
+from logging_config import configure_logging
+from metrics import RequestMetrics
 
 
 def create_app(config: Optional[dict] = None) -> Flask:
@@ -38,12 +40,16 @@ def create_app(config: Optional[dict] = None) -> Flask:
     if config:
         app.config.update(config)
 
-    # Configure logging
-    if IS_DOCKER:
-        app.logger.setLevel("WARNING")
-    else:
-        app.logger.setLevel("INFO")
-        app.logger.info("Running in local development mode")
+    # Configure structured logging
+    log_level = "WARNING" if IS_DOCKER else "INFO"
+    use_json = os.getenv("JSON_LOGS", "false").lower() == "true"
+    configure_logging(log_level=log_level, use_json=use_json)
+
+    app.logger.info(f"Application starting (IS_DOCKER={IS_DOCKER})")
+
+    # Initialize metrics middleware
+    metrics = RequestMetrics(app)
+    app.extensions['metrics'] = metrics
 
     # Configure CORS
     allowed_origins = app.config["ALLOWED_ORIGINS"].split(",")

@@ -17,6 +17,9 @@ alembic==1.13.3
 # Environment variables
 python-dotenv==1.0.1
 
+# File type detection
+python-magic==0.4.27
+
 # Background task queue
 celery==5.4.0
 celery-types==0.22.0
