@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    // Enable type checking for JavaScript files
+    "checkJs": true,
+    // Use strict type checking
+    "strict": true,
+    // Enable all strict mode family options
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+
+    // Additional checks
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+
+    // Module resolution
+    "module": "esnext",
+    "moduleResolution": "node",
+    "target": "es2020",
+    "lib": ["es2020", "dom"],
+
+    // Allow JavaScript
+    "allowJs": true,
+
+    // Skip type checking of declaration files
+    "skipLibCheck": true,
+
+    // Report errors for unused labels
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false
+  },
+  "include": [
+    "javascripts/**/*.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.js",
+    "**/*.test.js"
+  ]
+}

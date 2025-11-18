@@ -92,7 +92,9 @@ nav:
 # watch:
   # - docs/includes
 plugins:
-  - search
+  - search:
+      separator: '[\s\-,:!=\[\]()"`/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
+      lang: en
   - privacy
   - git-revision-date-localized:
       type: date

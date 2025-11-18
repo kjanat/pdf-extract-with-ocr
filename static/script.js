@@ -140,12 +140,25 @@ function uploadSingleFile(file) {
         method: 'POST',
         body: formData
     })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.error || `Server error: ${response.status}`);
+                }).catch(jsonError => {
+                    throw new Error(`Server error: ${response.status}`);
+                });
+            }
+            return response.json();
+        })
         .then(data => {
+            if (data.error) {
+                displayError(`Error uploading file: ${data.error}`);
+                return;
+            }
             if (data.task_id) {
                 pollForResults(data.task_id, file.name);
             } else {
-                displayError(`Error uploading file: ${data.error || 'Unknown error'}`);
+                displayError('Error uploading file: No task ID received');
             }
         })
         .catch(error => {
@@ -161,9 +174,25 @@ function uploadMultipleFile(file) {
         method: 'POST',
         body: formData
     })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.error || `Server error: ${response.status}`);
+                }).catch(jsonError => {
+                    throw new Error(`Server error: ${response.status}`);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                console.error('Error uploading file:', data.error);
+                return;
+            }
+            console.log('Upload successful:', data.task_id);
+        })
         .catch(error => {
-            console.error('Error uploading file:', error);
+            console.error('Error uploading file:', error.message);
         });
 }
 
@@ -171,10 +200,41 @@ function pollForResults(taskId, filename) {
     const resultDiv = document.getElementById('result');
     if (!resultDiv) return;
 
+    let pollCount = 0;
+    const MAX_POLLS = 300; // 5 minutes (300 seconds)
+
     const interval = setInterval(() => {
+        pollCount++;
+
+        // Timeout after 5 minutes
+        if (pollCount > MAX_POLLS) {
+            clearInterval(interval);
+            showSpinner(false);
+            displayError('Processing timeout: Job took too long to complete. Please try again or check the jobs page.');
+            return;
+        }
+
         fetch(`/status/${taskId}`)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    // Handle HTTP errors (404, 500, etc.)
+                    if (response.status === 404) {
+                        return response.json().then(data => {
+                            throw new Error(data.error || 'Job not found');
+                        }).catch(() => {
+                            throw new Error('Job not found');
+                        });
+                    }
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
+                // Validate response structure
+                if (!data.state) {
+                    throw new Error('Invalid response from server');
+                }
+
                 if (data.state === 'COMPLETED') {
                     clearInterval(interval);
                     showSpinner(false);
@@ -182,9 +242,15 @@ function pollForResults(taskId, filename) {
                 } else if (data.state === 'FAILED') {
                     clearInterval(interval);
                     showSpinner(false);
-                    displayError(`Processing failed: ${data.error_message || 'Unknown error'}`);
+                    const errorMsg = data.error_message || data.error || 'Processing failed';
+                    displayError(`Processing failed: ${errorMsg}`);
+                } else if (data.state === 'PROCESSING') {
+                    // Optional: Update UI to show processing status
+                    console.log(`Processing ${filename}... (${pollCount}s)`);
+                } else if (data.state === 'PENDING') {
+                    console.log(`Waiting in queue for ${filename}... (${pollCount}s)`);
                 }
-                // Continue polling for PENDING state
+                // Continue polling for PENDING and PROCESSING states
             })
             .catch(error => {
                 clearInterval(interval);
@@ -196,8 +262,22 @@ function pollForResults(taskId, filename) {
 
 function fetchAndDisplayResult(taskId, resultDiv) {
     fetch(`/api/result/${taskId}`)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.error || `Server error: ${response.status}`);
+                }).catch(jsonError => {
+                    throw new Error(`Server error: ${response.status}`);
+                });
+            }
+            return response.json();
+        })
         .then(data => {
+            if (data.error) {
+                displayError(`Error: ${data.error}`);
+                return;
+            }
+
             const extractedText = data.text || '';
 
             // Check if there's any meaningful text content
@@ -234,6 +314,11 @@ function fetchAndDisplayResult(taskId, resultDiv) {
 async function fetchJobs() {
     try {
         const response = await fetch('/api/jobs');
+
+        if (!response.ok) {
+            throw new Error(`Server error: ${response.status}`);
+        }
+
         const jobs = await response.json();
 
         const tbody = document.getElementById('job-table-body');
@@ -247,6 +332,10 @@ async function fetchJobs() {
         });
     } catch (error) {
         console.error('Error fetching jobs:', error);
+        const tbody = document.getElementById('job-table-body');
+        if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Error loading jobs. Please refresh the page.</td></tr>';
+        }
     }
 }
 
@@ -279,13 +368,24 @@ function createJobTableRow(job) {
 async function viewResult(taskId) {
     try {
         const response = await fetch(`/api/result/${taskId}`);
+
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            throw new Error(data.error || `Server error: ${response.status}`);
+        }
+
         const data = await response.json();
+
+        if (data.error) {
+            throw new Error(data.error);
+        }
+
         const extractedText = data.text || '';
-        
+
         const modal = document.createElement('div');
         modal.className = 'modal';
         modal.style.display = 'block';
-        
+
         // Different content based on whether there's text to display
         if (extractedText.trim()) {
             modal.innerHTML = `
@@ -299,7 +399,7 @@ async function viewResult(taskId) {
                     <button id="modal-copy-button" class="button">Copy Text</button>
                 </div>
             `;
-            
+
             document.body.appendChild(modal);
             setupCopyButton('modal-copy-button', '.text-container pre');
         } else {
@@ -313,7 +413,7 @@ async function viewResult(taskId) {
                     </div>
                 </div>
             `;
-            
+
             document.body.appendChild(modal);
         }
     } catch (error) {
